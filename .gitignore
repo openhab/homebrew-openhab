@@ -1,0 +1,6 @@
+# Ignore IDE directories
+.idea
+.vscode
+
+# Ignore OS X Finder thumbnail files
+.DS_Store
