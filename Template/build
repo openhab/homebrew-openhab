@@ -37,8 +37,10 @@ to_kebab() {
 
 process() {
   local formulaName=$1
+  local formulaNameAsKebap
+  formulaNameAsKebap=$(to_kebab "$formulaName")
   local formulaFile
-  formulaFile=$DEST_DIR/$(to_kebab $formulaName)".rb"
+  formulaFile=$DEST_DIR/$formulaNameAsKebap".rb"
   local conflicts=$2
   # openHAB distribution
   local distroUrl=$3
@@ -79,6 +81,7 @@ process() {
   sed -i "s|\$ADDONS_URL|$addOnsUrl|g" "$formulaFile"
   sed -i "s|\$ADDONS_SHA|$addOnsSha|g" "$formulaFile"
   sed -i "s|\$ADDONS_KAR|$addOnsKar|g" "$formulaFile"
+  sed -i "s|\$SERVICE_NAME|$formulaNameAsKebap|g" "$formulaFile"
   echo "DONE"
 }
 

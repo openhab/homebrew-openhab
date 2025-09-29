@@ -342,9 +342,8 @@ class FORMULA_NAME < Formula
   end
 
   def caveats
-    version = read_version(openhab_userdata/"etc/version.properties")
     <<~EOS
-      openHAB #{version} - empowering the smart home
+      openHAB - empowering the smart home
 
       Website:       https://www.openhab.org
       Documentation: https://www.openhab.org/docs
@@ -360,11 +359,17 @@ class FORMULA_NAME < Formula
         openhab
 
       To run openHAB as a background service:
-        brew services start openhab
+        brew services start $SERVICE_NAME
 
-      To install the add-ons for offline use:
-        curl -L --output-dir #{openhab_addons} -o $ADDONS_KAR $ADDONS_URL \
-          && echo "$ADDONS_SHA #{openhab_addons}/$ADDONS_KAR" | sha256sum -c -
+      To avoid unexpected updates, pin the version:
+        brew pin $SERVICE_NAME
+      To unpin the version:
+        brew unpin $SERVICE_NAME
+
+      To install the add-ons KAR for offline use:
+        curl -L --output-dir #{openhab_addons} -o $ADDONS_KAR $ADDONS_URL
+      To verify its checksum:
+        echo "$ADDONS_SHA #{openhab_addons}/$ADDONS_KAR" | sha256sum -c -
     EOS
   end
 
