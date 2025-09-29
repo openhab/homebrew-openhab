@@ -1,3 +1,6 @@
+# rubocop:disable FormulaAudit/Desc
+# rubocop:disable Style/GlobalVars
+
 class Openhab < Formula
   desc "openHAB - empowering the smart home"
   homepage "https://www.openhab.org/"
