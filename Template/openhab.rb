@@ -335,8 +335,9 @@ class FORMULA_NAME < Formula
   end
 
   service do
-    run [opt_bin/"openhab"]
+    run opt_bin/"openhab"
     keep_alive true
+    launch_only_once true
     working_dir opt_libexec
   end
 
