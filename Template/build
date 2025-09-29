@@ -44,18 +44,18 @@ process() {
   local addOnsSha
 
   echo -n "Downloading distro tarball from $distroUrl ... "
-#  if curl -sL -o "$distroTarball" "$distroUrl"; then echo "DONE"; else echo "FAILED" && exit 1; fi
+  if curl -sL -o "$distroTarball" "$distroUrl"; then echo "DONE"; else echo "FAILED" && exit 1; fi
   echo -n "Calculating SHA256 checksum for distro tarball ... "
   distroSha=$(shasum -a 256 "$distroTarball" | awk '{print $1}')
   if [[ -n $distroSha ]]; then echo "DONE: $distroSha"; else echo "FAILED" && exit 1; fi
 
   echo -n "Downloading add-ons KAR from $addOnsUrl ... "
-#  if curl -sL -o "$addOnsKar" "$addOnsUrl"; then echo "DONE"; else echo "FAILED" && exit 1; fi
+  if curl -sL -o "$addOnsKar" "$addOnsUrl"; then echo "DONE"; else echo "FAILED" && exit 1; fi
   echo -n "Calculating SHA256 checksum for add-ons KAR ... "
   addOnsSha=$(shasum -a 256 "$addOnsKar" 2>/dev/null | awk '{print $1}')
   if [[ -n $addOnsSha ]]; then echo "DONE: $addOnsSha"; else echo "FAILED" && exit 1; fi
 
-  echo "Creating $formulaFile from template ..."
+  echo -n "Creating $formulaFile from template ... "
   cp $SRC "$formulaFile"
   sed -i "s|\$CONFLICTS|$conflicts|g" "$formulaFile"
   sed -i "s|\$DISTRO_URL|$distroUrl|g" "$formulaFile"
@@ -63,8 +63,7 @@ process() {
   sed -i "s|\$ADDONS_URL|$addOnsUrl|g" "$formulaFile"
   sed -i "s|\$ADDONS_SHA|$addOnsSha|g" "$formulaFile"
   sed -i "s|\$ADDONS_KAR|$addOnsKar|g" "$formulaFile"
-
-  echo "Done"
+  echo "DONE"
 }
 
 process \
