@@ -4,3 +4,7 @@
 
 # Ignore OS X Finder thumbnail files
 .DS_Store
+
+# Ignore distribution artefacts
+openhab-*.tar.gz
+openhab-addons-*.kar
