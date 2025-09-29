@@ -1,4 +1,4 @@
-class Openhab < Formula
+class FORMULA_NAME < Formula
   desc "Homebrewed openHAB - Empowering the smart home"
   homepage "https://www.openhab.org/"
   url "$DISTRO_URL"
@@ -7,8 +7,8 @@ class Openhab < Formula
 
   depends_on "openjdk@21" => :recommended
 
-  # conflicts_with $CONFLICTS,
-  #   because: "It provides a different version of openHAB"
+  conflicts_with $CONFLICTS,
+    because: "it provides a different version of openHAB"
 
   def openhab_home
     libexec

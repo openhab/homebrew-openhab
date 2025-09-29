@@ -31,14 +31,15 @@ fi
 
 process() {
   local formulaFile=$DEST_DIR/"$1"
-  local conflicts=$2
+  local formulaName=$2
+  local conflicts=$3
   # openHAB distribution
-  local distroUrl=$3
+  local distroUrl=$4
   local distroTarball
   distroTarball=$(basename "$distroUrl")
   local distroSha
   # openHAB add-ons
-  local addOnsUrl=$4
+  local addOnsUrl=$5
   local addOnsKar
   addOnsKar=$(basename "$addOnsUrl")
   local addOnsSha
@@ -57,6 +58,7 @@ process() {
 
   echo -n "Creating $formulaFile from template ... "
   cp $SRC "$formulaFile"
+  sed -i "s|\FORMULA_NAME|$formulaName|g" "$formulaFile"
   sed -i "s|\$CONFLICTS|$conflicts|g" "$formulaFile"
   sed -i "s|\$DISTRO_URL|$distroUrl|g" "$formulaFile"
   sed -i "s|\$DISTRO_SHA|$distroSha|g" "$formulaFile"
@@ -67,11 +69,9 @@ process() {
 }
 
 process \
-  "openhab.rb" \
-  "\"openhab-testing\"" \
+  "openhab.rb" "Openhab" "\"openhab-milestone\"" \
   "https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab/$OPENHAB_VERSION/openhab-$OPENHAB_VERSION.tar.gz" \
   "https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab-addons/$OPENHAB_VERSION/openhab-addons-$OPENHAB_VERSION.kar"
-#process "openhab-testing.rb" \
-#  "openhab" \
-#  "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab/$OPENHAB_TESTING_VERSION/openhab-$OPENHAB_TESTING_VERSION.tar.gz" \
-#  "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab-addons/$OPENHAB_TESTING_VERSION/openhab-addons-$OPENHAB_TESTING_VERSION.kar"
+process "openhab-milestone.rb" "OpenhabMilestone" "\"openhab\"" \
+  "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab/$OPENHAB_TESTING_VERSION/openhab-$OPENHAB_TESTING_VERSION.tar.gz" \
+  "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab-addons/$OPENHAB_TESTING_VERSION/openhab-addons-$OPENHAB_TESTING_VERSION.kar"
