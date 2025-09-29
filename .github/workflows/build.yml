@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   generate-formulae:
@@ -14,9 +17,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Build Script
-        run: |
-          chmod +x Template/build
-          Template/build
+        run: Template/build
         env:
           OPENHAB_VERSION: 5.0.1
           OPENHAB_TESTING_VERSION: 5.1.0.M1
@@ -27,18 +28,62 @@ jobs:
         run: |
           set -o pipefail
           changed_files=$(echo -n "$(git diff --name-only HEAD Formula && git ls-files --others --exclude-standard Formula)"|tr '\n' ' ')
-          echo "changed_files=$changed_files" >> $GITHUB_OUTPUT
+          echo changed_files="$changed_files" >> "$GITHUB_OUTPUT"
 
-      # Configure Git
       - name: Configure Git
-        if: steps.formulae-changed-files.outputs.changed_files != ''
+        if: github.event_name == 'push' && steps.formulae-changed-files.outputs.changed_files != ''
         run: |
           git config user.name "openhab-bot"
           git config user.email "bot@openhab.org"
 
       - name: Commit and Push
-        if: steps.formulae-changed-files.outputs.changed_files != ''
+        if: github.event_name == 'push' && steps.formulae-changed-files.outputs.changed_files != ''
         run: |
           git add Formula/*
           git commit -m "[ci] Automated Formulae update"
           git push
+
+  test-bot:
+    name: Homebrew Test Bot
+    needs: generate-formulae
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04, macos-15-intel, macos-26 ]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      actions: read
+      checks: read
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache Homebrew Bundler RubyGems
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+          key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+          restore-keys: ${{ matrix.os }}-rubygems-
+
+      # Avoid test-bot picking up template files
+      - name: Remove Template files
+        run: rm -r Template
+
+      - run: brew test-bot --only-cleanup-before
+
+      - run: brew test-bot --only-setup
+
+      - run: brew test-bot --only-tap-syntax
+      - run: brew test-bot --only-formulae
+        if: github.event_name == 'pull_request'
+
+      - name: Upload bottles as artifact
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: bottles_${{ matrix.os }}
+          path: '*.bottle.*'
