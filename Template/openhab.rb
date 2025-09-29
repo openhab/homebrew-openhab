@@ -280,15 +280,15 @@ class FORMULA_NAME < Formula
     java = Formula["openjdk@21"].opt_bin/"java"
     upgradetool = openhab_runtime/"bin/upgradetool.jar"
 
-    stdout, stderr, = Open3.capture3(env, java, "-jar", upgradetool)
+    stdout, stderr, status = Open3.capture3(env, java, "-jar", upgradetool)
     ohai stdout
 
-    unless stderr.empty?
+    if status.success?
+      ohai "JSON database updated successfully."
+    else
       ohai stderr
       opoo "Update tool failed, please check the openHAB website (www.openhab.org) for manual update instructions."
     end
-
-    ohai "JSON database updated successfully."
   end
 
   # Invoked by Homebrew after installation is finished.
