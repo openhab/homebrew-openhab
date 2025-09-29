@@ -1,0 +1,77 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SRC="Template/openhab.rb"
+DEST_DIR="Formula"
+
+if [[ ! -f "$SRC" ]]; then
+  echo "Template file does not exist!"
+  exit 1
+fi
+
+if [[ ! -d "$DEST_DIR" ]]; then
+  mkdir $DEST_DIR
+fi
+
+if [[ -z "${OPENHAB_VERSION:-}" ]]; then
+  echo "OPENHAB_VERSION env variable missing!"
+  exit 1
+fi
+
+if [[ -z "${OPENHAB_TESTING_VERSION:-}" ]]; then
+  echo "OPENHAB_TESTING_VERSION env variable missing!"
+  exit 1
+fi
+
+if [[ -z "${OPENHAB_SNAPSHOT_VERSION:-}" ]]; then
+  echo "OPENHAB_SNAPSHOT_VERSION env variable missing!"
+  exit 1
+fi
+
+process() {
+  local formulaFile=$DEST_DIR/"$1"
+  local conflicts=$2
+  # openHAB distribution
+  local distroUrl=$3
+  local distroTarball
+  distroTarball=$(basename "$distroUrl")
+  local distroSha
+  # openHAB add-ons
+  local addOnsUrl=$4
+  local addOnsKar
+  addOnsKar=$(basename "$addOnsUrl")
+  local addOnsSha
+
+  echo -n "Downloading distro tarball from $distroUrl ... "
+  if curl -sL -o "$distroTarball" "$distroUrl"; then echo "DONE"; else echo "FAILED" && exit 1; fi
+  echo -n "Calculating SHA256 checksum for distro tarball ... "
+  distroSha=$(shasum -a 256 "$distroTarball" | awk '{print $1}')
+  if [[ -n $distroSha ]]; then echo "DONE: $distroSha"; else echo "FAILED" && exit 1; fi
+
+  echo -n "Downloading add-ons KAR from $addOnsUrl ... "
+  if curl -sL -o "$addOnsKar" "$addOnsUrl"; then echo "DONE"; else echo "FAILED" && exit 1; fi
+  echo -n "Calculating SHA256 checksum for add-ons KAR ... "
+  addOnsSha=$(shasum -a 256 "$addOnsKar" 2>/dev/null | awk '{print $1}')
+  if [[ -n $addOnsSha ]]; then echo "DONE: $addOnsSha"; else echo "FAILED" && exit 1; fi
+
+  echo -n "Creating $formulaFile from template ... "
+  cp $SRC "$formulaFile"
+  sed -i "s|\$CONFLICTS|$conflicts|g" "$formulaFile"
+  sed -i "s|\$DISTRO_URL|$distroUrl|g" "$formulaFile"
+  sed -i "s|\$DISTRO_SHA|$distroSha|g" "$formulaFile"
+  sed -i "s|\$ADDONS_URL|$addOnsUrl|g" "$formulaFile"
+  sed -i "s|\$ADDONS_SHA|$addOnsSha|g" "$formulaFile"
+  sed -i "s|\$ADDONS_KAR|$addOnsKar|g" "$formulaFile"
+  echo "DONE"
+}
+
+process \
+  "openhab.rb" \
+  "\"openhab-testing\"" \
+  "https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab/$OPENHAB_VERSION/openhab-$OPENHAB_VERSION.tar.gz" \
+  "https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab-addons/$OPENHAB_VERSION/openhab-addons-$OPENHAB_VERSION.kar"
+#process "openhab-testing.rb" \
+#  "openhab" \
+#  "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab/$OPENHAB_TESTING_VERSION/openhab-$OPENHAB_TESTING_VERSION.tar.gz" \
+#  "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab-addons/$OPENHAB_TESTING_VERSION/openhab-addons-$OPENHAB_TESTING_VERSION.kar"
