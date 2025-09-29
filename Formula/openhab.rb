@@ -279,15 +279,15 @@ class Openhab < Formula
     java = Formula["openjdk@21"].opt_bin/"java"
     upgradetool = openhab_runtime/"bin/upgradetool.jar"
 
-    stdout, stderr, = Open3.capture3(env, java, "-jar", upgradetool)
+    stdout, stderr, status = Open3.capture3(env, java, "-jar", upgradetool)
     ohai stdout
 
-    unless stderr.empty?
+    if status.success?
+      ohai "JSON database updated successfully."
+    else
       ohai stderr
       opoo "Update tool failed, please check the openHAB website (www.openhab.org) for manual update instructions."
     end
-
-    ohai "JSON database updated successfully."
   end
 
   # Invoked by Homebrew after installation is finished.
@@ -334,15 +334,15 @@ class Openhab < Formula
   end
 
   service do
-    run [opt_bin/"openhab"]
+    run opt_bin/"openhab"
     keep_alive true
+    launch_only_once true
     working_dir opt_libexec
   end
 
   def caveats
-    version = read_version(openhab_userdata/"etc/version.properties")
     <<~EOS
-      openHAB #{version} - empowering the smart home
+      openHAB - empowering the smart home
 
       Website:       https://www.openhab.org
       Documentation: https://www.openhab.org/docs
@@ -360,9 +360,15 @@ class Openhab < Formula
       To run openHAB as a background service:
         brew services start openhab
 
-      To install the add-ons for offline use:
-        curl -L --output-dir #{openhab_addons} -o openhab-addons-5.0.1.kar https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab-addons/5.0.1/openhab-addons-5.0.1.kar \
-          && echo "8c3de5e5d9088b7074ca097e6f508caffb41cab1869db3586f41d4440b820540 #{openhab_addons}/openhab-addons-5.0.1.kar" | sha256sum -c -
+      To avoid unexpected updates, pin the version:
+        brew pin openhab
+      To unpin the version:
+        brew unpin openhab
+
+      To install the add-ons KAR for offline use:
+        curl -L --output-dir #{openhab_addons} -o openhab-addons-5.0.1.kar https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab-addons/5.0.1/openhab-addons-5.0.1.kar
+      To verify its checksum:
+        echo "8c3de5e5d9088b7074ca097e6f508caffb41cab1869db3586f41d4440b820540 #{openhab_addons}/openhab-addons-5.0.1.kar" | sha256sum -c -
     EOS
   end
 

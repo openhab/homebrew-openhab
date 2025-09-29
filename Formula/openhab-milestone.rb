@@ -3,6 +3,7 @@ class OpenhabMilestone < Formula
   homepage "https://www.openhab.org/"
   url "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab/5.1.0.M1/openhab-5.1.0.M1.tar.gz"
   sha256 "a65a7ea15a166567b2e9863a327c25d152a6c0fff6eb30d5c4ac6ad2a544e419"
+  version "5.1.0.M1"
   license "EPL-2.0"
 
   depends_on "openjdk@21" => :recommended
@@ -279,15 +280,15 @@ class OpenhabMilestone < Formula
     java = Formula["openjdk@21"].opt_bin/"java"
     upgradetool = openhab_runtime/"bin/upgradetool.jar"
 
-    stdout, stderr, = Open3.capture3(env, java, "-jar", upgradetool)
+    stdout, stderr, status = Open3.capture3(env, java, "-jar", upgradetool)
     ohai stdout
 
-    unless stderr.empty?
+    if status.success?
+      ohai "JSON database updated successfully."
+    else
       ohai stderr
       opoo "Update tool failed, please check the openHAB website (www.openhab.org) for manual update instructions."
     end
-
-    ohai "JSON database updated successfully."
   end
 
   # Invoked by Homebrew after installation is finished.
@@ -334,15 +335,15 @@ class OpenhabMilestone < Formula
   end
 
   service do
-    run [opt_bin/"openhab"]
+    run opt_bin/"openhab"
     keep_alive true
+    launch_only_once true
     working_dir opt_libexec
   end
 
   def caveats
-    version = read_version(openhab_userdata/"etc/version.properties")
     <<~EOS
-      openHAB #{version} - empowering the smart home
+      openHAB - empowering the smart home
 
       Website:       https://www.openhab.org
       Documentation: https://www.openhab.org/docs
@@ -358,11 +359,17 @@ class OpenhabMilestone < Formula
         openhab
 
       To run openHAB as a background service:
-        brew services start openhab
+        brew services start openhab-milestone
 
-      To install the add-ons for offline use:
-        curl -L --output-dir #{openhab_addons} -o openhab-addons-5.1.0.M1.kar https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab-addons/5.1.0.M1/openhab-addons-5.1.0.M1.kar \
-          && echo "b003760ef938ed794c4b43fe10b897cd648bd6a93a3e922caf95dd60d457bd8a #{openhab_addons}/openhab-addons-5.1.0.M1.kar" | sha256sum -c -
+      To avoid unexpected updates, pin the version:
+        brew pin openhab-milestone
+      To unpin the version:
+        brew unpin openhab-milestone
+
+      To install the add-ons KAR for offline use:
+        curl -L --output-dir #{openhab_addons} -o openhab-addons-5.1.0.M1.kar https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab-addons/5.1.0.M1/openhab-addons-5.1.0.M1.kar
+      To verify its checksum:
+        echo "b003760ef938ed794c4b43fe10b897cd648bd6a93a3e922caf95dd60d457bd8a #{openhab_addons}/openhab-addons-5.1.0.M1.kar" | sha256sum -c -
     EOS
   end
 
