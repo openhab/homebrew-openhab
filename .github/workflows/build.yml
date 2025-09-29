@@ -1,0 +1,44 @@
+name: CI Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-formulae:
+    name: Generate Formulae from Template
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Build Script
+        run: |
+          chmod +x Template/build
+          Template/build
+        env:
+          OPENHAB_VERSION: 5.0.1
+          OPENHAB_TESTING_VERSION: 5.1.0.M1
+          OPENHAB_SNAPSHOT_VERSION: 5.1.0
+
+      - name: Check for changed Formulae
+        id: formulae-changed-files
+        run: |
+          set -o pipefail
+          changed_files=$(echo -n "$(git diff --name-only HEAD Formula && git ls-files --others --exclude-standard Formula)"|tr '\n' ' ')
+          echo "changed_files=$changed_files" >> $GITHUB_OUTPUT
+
+      # Configure Git
+      - name: Configure Git
+        if: steps.formulae-changed-files.outputs.changed_files != ''
+        run: |
+          git config user.name "openhab-bot"
+          git config user.email "bot@openhab.org"
+
+      - name: Commit and Push
+        if: steps.formulae-changed-files.outputs.changed_files != ''
+        run: |
+          git add Formula/*
+          git commit -m "[ci] Automated Formulae update"
+          git push
