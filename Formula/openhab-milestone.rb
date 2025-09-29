@@ -1,13 +1,13 @@
-class Openhab < Formula
+class OpenhabMilestone < Formula
   desc "Homebrewed openHAB - Empowering the smart home"
   homepage "https://www.openhab.org/"
-  url "https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab/5.0.1/openhab-5.0.1.tar.gz"
-  sha256 "c71bf0af368e171cc3d58e32ba98d34405569aa787de28cd5e616edbeaf1e019"
+  url "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab/5.1.0.M1/openhab-5.1.0.M1.tar.gz"
+  sha256 "a65a7ea15a166567b2e9863a327c25d152a6c0fff6eb30d5c4ac6ad2a544e419"
   license "EPL-2.0"
 
   depends_on "openjdk@21" => :recommended
 
-  conflicts_with "openhab-milestone",
+  conflicts_with "openhab",
     because: "it provides a different version of openHAB"
 
   def openhab_home
@@ -361,8 +361,8 @@ class Openhab < Formula
         brew services start openhab
 
       To install the add-ons for offline use:
-        curl -L --output-dir #{openhab_addons} -o openhab-addons-5.0.1.kar https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab-addons/5.0.1/openhab-addons-5.0.1.kar \
-          && echo "8c3de5e5d9088b7074ca097e6f508caffb41cab1869db3586f41d4440b820540 #{openhab_addons}/openhab-addons-5.0.1.kar" | sha256sum -c -
+        curl -L --output-dir #{openhab_addons} -o openhab-addons-5.1.0.M1.kar https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab-addons/5.1.0.M1/openhab-addons-5.1.0.M1.kar \
+          && echo "b003760ef938ed794c4b43fe10b897cd648bd6a93a3e922caf95dd60d457bd8a #{openhab_addons}/openhab-addons-5.1.0.M1.kar" | sha256sum -c -
     EOS
   end
 
