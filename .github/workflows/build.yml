@@ -8,6 +8,11 @@ on:
     branches:
       - main
 
+env:
+  OPENHAB_VERSION: 5.0.1
+  OPENHAB_TESTING_VERSION: 5.1.0.M1
+  OPENHAB_SNAPSHOT_VERSION: 5.1.0
+
 jobs:
   generate-formulae:
     name: Generate Formulae from Template
@@ -19,9 +24,9 @@ jobs:
       - name: Run Build Script
         run: Template/build
         env:
-          OPENHAB_VERSION: 5.0.1
-          OPENHAB_TESTING_VERSION: 5.1.0.M1
-          OPENHAB_SNAPSHOT_VERSION: 5.1.0
+          OPENHAB_VERSION: ${{ env.OPENHAB_VERSION }}
+          OPENHAB_TESTING_VERSION: ${{ env.OPENHAB_TESTING_VERSION }}
+          OPENHAB_SNAPSHOT_VERSION: ${{ env.OPENHAB_SNAPSHOT_VERSION }}
 
       - name: Check for changed Formulae
         id: formulae-changed-files
@@ -42,6 +47,14 @@ jobs:
           git add Formula/*
           git commit -m "[ci] Automated Formulae update"
           git push
+
+      - name: Upload Formulae
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: formulae
+          path: |
+            Formula
 
   test-bot:
     name: Homebrew Test Bot
@@ -68,6 +81,14 @@ jobs:
           path: ${{ steps.set-up-homebrew.outputs.gems-path }}
           key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
           restore-keys: ${{ matrix.os }}-rubygems-
+
+      # Allow checking Formulae changes in PR without committing them
+      - name: Download Formulae
+        if: github.event_name == 'pull_request'
+        uses: actions/download-artifact@v5
+        with:
+          name: formulae
+          path: Formula
 
       # Avoid test-bot picking up template files
       - name: Remove Template files
