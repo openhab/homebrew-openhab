@@ -3,6 +3,7 @@ class FORMULA_NAME < Formula
   homepage "https://www.openhab.org/"
   url "$DISTRO_URL"
   sha256 "$DISTRO_SHA"
+  version "$VERSION"
   license "EPL-2.0"
 
   depends_on "openjdk@21" => :recommended

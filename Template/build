@@ -29,17 +29,24 @@ if [[ -z "${OPENHAB_SNAPSHOT_VERSION:-}" ]]; then
   exit 1
 fi
 
+to_kebab() {
+  echo "$1" \
+    | sed 's/\([a-z]\)\([A-Z]\)/\1-\2/g' \
+    | tr '[:upper:]' '[:lower:]'
+}
+
 process() {
-  local formulaFile=$DEST_DIR/"$1"
-  local formulaName=$2
-  local conflicts=$3
+  local formulaName=$1
+  local formulaFile
+  formulaFile=$DEST_DIR/$(to_kebab $formulaName)".rb"
+  local conflicts=$2
   # openHAB distribution
-  local distroUrl=$4
+  local distroUrl=$3
   local distroTarball
   distroTarball=$(basename "$distroUrl")
   local distroSha
   # openHAB add-ons
-  local addOnsUrl=$5
+  local addOnsUrl=$4
   local addOnsKar
   addOnsKar=$(basename "$addOnsUrl")
   local addOnsSha
@@ -59,6 +66,13 @@ process() {
   echo -n "Creating $formulaFile from template ... "
   cp $SRC "$formulaFile"
   sed -i "s|\FORMULA_NAME|$formulaName|g" "$formulaFile"
+
+  if [[ "$formulaName" == "Openhab" ]]; then
+    sed -i "/version \"\$VERSION\"/d" "$formulaFile"
+  else
+    sed -i "s|\$VERSION|$OPENHAB_TESTING_VERSION|g" "$formulaFile"
+  fi
+
   sed -i "s|\$CONFLICTS|$conflicts|g" "$formulaFile"
   sed -i "s|\$DISTRO_URL|$distroUrl|g" "$formulaFile"
   sed -i "s|\$DISTRO_SHA|$distroSha|g" "$formulaFile"
@@ -69,9 +83,10 @@ process() {
 }
 
 process \
-  "openhab.rb" "Openhab" "\"openhab-milestone\"" \
+  "Openhab" "\"openhab-milestone\"" \
   "https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab/$OPENHAB_VERSION/openhab-$OPENHAB_VERSION.tar.gz" \
   "https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab-addons/$OPENHAB_VERSION/openhab-addons-$OPENHAB_VERSION.kar"
-process "openhab-milestone.rb" "OpenhabMilestone" "\"openhab\"" \
+process \
+  "OpenhabMilestone" "\"openhab\"" \
   "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab/$OPENHAB_TESTING_VERSION/openhab-$OPENHAB_TESTING_VERSION.tar.gz" \
   "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab-addons/$OPENHAB_TESTING_VERSION/openhab-addons-$OPENHAB_TESTING_VERSION.kar"
