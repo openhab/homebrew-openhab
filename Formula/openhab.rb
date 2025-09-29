@@ -1,5 +1,3 @@
-# rubocop:disable FormulaAudit/Desc
-
 class Openhab < Formula
   desc "openHAB - empowering the smart home"
   homepage "https://www.openhab.org/"
@@ -298,7 +296,10 @@ class Openhab < Formula
     is_upgrade = current_version && new_version != current_version
 
     scan_versioning_list current_version, "MSG", "Important notes for version" if current_version && is_upgrade
-    scan_versioning_list current_version, "PRE", "Performing pre-update tasks for version" if current_version && is_upgrade
+    if current_version && is_upgrade
+      scan_versioning_list current_version, "PRE",
+"Performing pre-update tasks for version"
+    end
 
     # Copy default configuration & userdata
     ohai "Installing default configuration ..."
@@ -317,7 +318,10 @@ class Openhab < Formula
     ohai "Clearing cache ..."
     remove_cache
 
-    scan_versioning_list current_version, "POST", "Performing post-update tasks for version" if is_upgrade && current_version
+    if is_upgrade && current_version
+      scan_versioning_list current_version, "POST",
+"Performing post-update tasks for version"
+    end
     # TODO: What to do with addons file?
 
     run_upgradetool
