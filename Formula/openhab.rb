@@ -1,5 +1,4 @@
 # rubocop:disable FormulaAudit/Desc
-# rubocop:disable Style/GlobalVars
 
 class Openhab < Formula
   desc "openHAB - empowering the smart home"
@@ -141,11 +140,12 @@ class Openhab < Formula
   # Scans the `$OPENHAB_RUNTIME/bin/update.lst` versioning list for commands
   # that are specific to the current version and the section parameter.
   #
+  # @param current_version [String] the installed version (not the version that is being installed now)
   # @param section [String] the section to scan
   # @param version_message [String] the version message to print if a relevant section is found
-  def scan_versioning_list(section, version_message)
+  def scan_versioning_list(current_version, section, version_message)
     update_list_file = openhab_runtime/"bin/update.lst"
-    current_version_number = get_version_number($current_version)
+    current_version_number = get_version_number(current_version)
     return unless update_list_file.exist?
 
     in_section = false
@@ -293,12 +293,12 @@ class Openhab < Formula
     openhab_userdata.mkpath
     openhab_logs.mkpath
 
-    $current_version = read_version(openhab_userdata/"etc/version.properties")
-    $new_version = read_version(pkgshare/"userdata/etc/version.properties")
-    is_upgrade = $new_version != $current_version
+    current_version = read_version(openhab_userdata/"etc/version.properties")
+    new_version = read_version(pkgshare/"userdata/etc/version.properties")
+    is_upgrade = current_version && new_version != current_version
 
-    scan_versioning_list "MSG", "Important notes for version" if is_upgrade
-    scan_versioning_list "PRE", "Performing pre-update tasks for version" if is_upgrade
+    scan_versioning_list current_version, "MSG", "Important notes for version" if current_version && is_upgrade
+    scan_versioning_list current_version, "PRE", "Performing pre-update tasks for version" if current_version && is_upgrade
 
     # Copy default configuration & userdata
     ohai "Installing default configuration ..."
@@ -317,7 +317,7 @@ class Openhab < Formula
     ohai "Clearing cache ..."
     remove_cache
 
-    scan_versioning_list "POST", "Performing post-update tasks for version" if is_upgrade
+    scan_versioning_list current_version, "POST", "Performing post-update tasks for version" if is_upgrade && current_version
     # TODO: What to do with addons file?
 
     run_upgradetool
