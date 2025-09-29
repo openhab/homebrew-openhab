@@ -1,11 +1,14 @@
 class Openhab < Formula
   desc "Homebrewed openHAB - Empowering the smart home"
   homepage "https://www.openhab.org/"
-  url "https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab/5.0.1/openhab-5.0.1.tar.gz"
-  sha256 "c71bf0af368e171cc3d58e32ba98d34405569aa787de28cd5e616edbeaf1e019"
+  url "$DISTRO_URL"
+  sha256 "$DISTRO_SHA"
   license "EPL-2.0"
 
-  depends_on "openjdk@21"
+  depends_on "openjdk@21" => :recommended
+
+  # conflicts_with $CONFLICTS,
+  #   because: "It provides a different version of openHAB"
 
   def openhab_home
     libexec
@@ -358,7 +361,8 @@ class Openhab < Formula
         brew services start openhab
 
       To install the add-ons for offline use:
-        curl -L --output-dir #{openhab_addons} -O https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab-addons/#{version}/openhab-addons-#{version}.kar
+        curl -L --output-dir #{openhab_addons} -o $ADDONS_KAR $ADDONS_URL \
+          && echo "$ADDONS_SHA #{openhab_addons}/$ADDONS_KAR" | sha256sum -c -
     EOS
   end
 
