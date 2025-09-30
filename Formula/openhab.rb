@@ -6,6 +6,7 @@ class Openhab < Formula
   sha256 "c71bf0af368e171cc3d58e32ba98d34405569aa787de28cd5e616edbeaf1e019"
   license "EPL-2.0"
 
+  depends_on "openhab-cli"
   depends_on "openjdk@21" => :recommended
 
   conflicts_with "openhab-milestone",

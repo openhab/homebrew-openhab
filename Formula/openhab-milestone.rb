@@ -7,6 +7,7 @@ class OpenhabMilestone < Formula
   sha256 "a65a7ea15a166567b2e9863a327c25d152a6c0fff6eb30d5c4ac6ad2a544e419"
   license "EPL-2.0"
 
+  depends_on "openhab-cli"
   depends_on "openjdk@21" => :recommended
 
   conflicts_with "openhab",
