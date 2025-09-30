@@ -60,13 +60,13 @@ class FORMULA_NAME < Formula
     # Write path variables to an env file
     env_file = openhab_home/"env"
     env_file.write <<~EOS
-      OPENHAB_HOME=#{openhab_home}
-      OPENHAB_CONF=#{openhab_conf}
-      OPENHAB_RUNTIME=#{openhab_runtime}
-      OPENHAB_USERDATA=#{openhab_userdata}
-      OPENHAB_LOGDIR=#{openhab_logs}
-      OPENHAB_BACKUPS=#{openhab_backups}
-      JAVA_HOME=#{Formula["openjdk@21"].opt_prefix}
+      OPENHAB_HOME="#{openhab_home}"
+      OPENHAB_CONF="#{openhab_conf}"
+      OPENHAB_RUNTIME="#{openhab_runtime}"
+      OPENHAB_USERDATA="#{openhab_userdata}"
+      OPENHAB_LOGDIR="#{openhab_logs}"
+      OPENHAB_BACKUPS="#{openhab_backups}"
+      JAVA_HOME="#{Formula["openjdk@21"].opt_prefix}"
     EOS
 
     # Wrapper script for launching openHAB
@@ -227,8 +227,8 @@ class FORMULA_NAME < Formula
       ## PORTS
       ## The ports openHAB will bind its HTTP/HTTPS web server to.
 
-      #OPENHAB_HTTP_PORT=8080
-      #OPENHAB_HTTPS_PORT=8443
+      OPENHAB_HTTP_PORT=8080
+      OPENHAB_HTTPS_PORT=8443
 
       #########################
       ## HTTP(S) LISTEN ADDRESS
@@ -236,7 +236,7 @@ class FORMULA_NAME < Formula
       ##  0.0.0.0 (default) allows a connection from any location
       ##  127.0.0.1 only allows the local machine to connect
 
-      #OPENHAB_HTTP_ADDRESS=0.0.0.0
+      OPENHAB_HTTP_ADDRESS=0.0.0.0
 
       #########################
       ## JAVA OPTIONS
