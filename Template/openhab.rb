@@ -211,6 +211,46 @@ class FORMULA_NAME < Formula
     end
   end
 
+  # Installs the `$OPENHAB_CONF/default` file.
+  # It is the equivalent of the `/etc/default/openhab` file on Deb/Rpm installations.
+  #
+  # Adapted from the [openHAB Linuxpkg resources](https://github.com/openhab/openhab-linuxpkg/blob/main/resources/etc/default/openhab).
+  def install_default_file
+    default_file = openhab_conf/"default"
+
+    return if default_file.exist?
+
+    default_file.write <<~EOS
+      # openHAB service options
+
+      #########################
+      ## PORTS
+      ## The ports openHAB will bind its HTTP/HTTPS web server to.
+
+      #OPENHAB_HTTP_PORT=8080
+      #OPENHAB_HTTPS_PORT=8443
+
+      #########################
+      ## HTTP(S) LISTEN ADDRESS
+      ##  The listen address used by the HTTP(S) server.
+      ##  0.0.0.0 (default) allows a connection from any location
+      ##  127.0.0.1 only allows the local machine to connect
+
+      #OPENHAB_HTTP_ADDRESS=0.0.0.0
+
+      #########################
+      ## JAVA OPTIONS
+      ## Additional options for the JAVA_OPTS environment variable.
+      ## These will be appended to the execution of the openHAB Java runtime in front of all other options.
+      ##
+      ## A couple of independent examples:
+      ##   EXTRA_JAVA_OPTS="-Dgnu.io.rxtx.SerialPorts=/dev/ttyZWAVE:/dev/ttyUSB0:/dev/ttyS0:/dev/ttyS2:/dev/ttyACM0:/dev/ttyAMA0"
+      ##   EXTRA_JAVA_OPTS="-Djna.library.path=/lib/arm-linux-gnueabihf/ -Duser.timezone=Europe/Berlin -Dgnu.io.rxtx.SerialPorts=/dev/ttyZWave"
+
+      EXTRA_JAVA_OPTS=""
+    EOS
+  end
+
   # Installs the default configuration from the distro tarball to the configuration directory.
   #
   # This method copies all files from the tarballs `conf` directory to `$OPENHAB_CONF`.
@@ -327,6 +367,7 @@ class FORMULA_NAME < Formula
 
     # Copy default configuration & userdata
     ohai "Installing default configuration ..."
+    install_default_file
     install_default_configuration
     if openhab_userdata.children.empty?
       ohai "Installing system files ..."
