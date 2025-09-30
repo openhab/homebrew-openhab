@@ -1,5 +1,8 @@
 # openHAB Homebrew Tap
 
+[![CI Build](https://github.com/openhab/homebrew-openhab/actions/workflows/build.yml/badge.svg)](https://github.com/openhab/homebrew-openhab/actions/workflows/build.yml)
+[![EPL-2.0](https://img.shields.io/badge/license-EPL%202-green.svg)](https://opensource.org/licenses/EPL-2.0)
+
 This repository provides Homebrew formulae to install openHAB with the [Homebrew Package Manager](https://brew.sh) on macOS (and Linux).
 
 For information about the general openHAB package, please visit the [openhab-distro GitHub repo](https://github.com/openhab/openhab-distro).
