@@ -24,6 +24,18 @@ brew install openhab
 brew install openhab-milestone
 ```
 
+To install a previous stable version, you can check out the tagged version of the tap (example for openHAB 5.0):
+
+```shell
+git -C $(brew --prefix)/Homebrew/Library/Taps/openhab/homebrew-openhab checkout v5.0
+```
+
+To switch back to the HEAD of the tap (i.e. current stable or milestone), you can run:
+
+```shell
+git -C $(brew --prefix)/Homebrew/Library/Taps/openhab/homebrew-openhab checkout main && git -C $(brew --prefix)/Homebrew/Library/Taps/openhab/homebrew-openhab pull
+```
+
 Information about the formula, e.g. how to enable the service, can be retrieved with `brew info openhab` resp. `brew info openhab-milestone`.
 
 ## Documentation
