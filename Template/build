@@ -53,20 +53,28 @@ process() {
   addOnsKar=$(basename "$addOnsUrl")
   local addOnsSha
 
-  echo -n "Downloading distro tarball from $distroUrl ... "
+  echo "Building Formula file for $formulaNameAsKebap from template:"
+
+  echo -n "  Downloading distro tarball from $distroUrl ... "
   if curl -sL -o "$distroTarball" "$distroUrl"; then echo "DONE"; else echo "FAILED" && exit 1; fi
-  echo -n "Calculating SHA256 checksum for distro tarball ... "
+  echo -n "  Calculating SHA256 checksum for distro tarball ... "
   distroSha=$(shasum -a 256 "$distroTarball" | awk '{print $1}')
   if [[ -n $distroSha ]]; then echo "DONE: $distroSha"; else echo "FAILED" && exit 1; fi
 
-  echo -n "Downloading add-ons KAR from $addOnsUrl ... "
+  echo -n "  Downloading add-ons KAR from $addOnsUrl ... "
   if curl -sL -o "$addOnsKar" "$addOnsUrl"; then echo "DONE"; else echo "FAILED" && exit 1; fi
-  echo -n "Calculating SHA256 checksum for add-ons KAR ... "
+  echo -n "  Calculating SHA256 checksum for add-ons KAR ... "
   addOnsSha=$(shasum -a 256 "$addOnsKar" 2>/dev/null | awk '{print $1}')
   if [[ -n $addOnsSha ]]; then echo "DONE: $addOnsSha"; else echo "FAILED" && exit 1; fi
 
-  echo -n "Creating $formulaFile from template ... "
+  echo -n "  Creating $formulaFile from template ... "
+  # Copy template with formula name
   cp $SRC "$formulaFile"
+
+  # Add header
+  sed -i "1 i\# DO NOT EDIT MANUALLY. Instead edit the Template/openhab.rb file." "$formulaFile"
+
+  # Replace placeholders
   sed -i "s|\FORMULA_NAME|$formulaName|g" "$formulaFile"
 
   if [[ "$formulaName" == "Openhab" ]]; then
@@ -83,6 +91,7 @@ process() {
   sed -i "s|\$ADDONS_KAR|$addOnsKar|g" "$formulaFile"
   sed -i "s|\$SERVICE_NAME|$formulaNameAsKebap|g" "$formulaFile"
   echo "DONE"
+  echo -e "DONE\n"
 }
 
 process \
