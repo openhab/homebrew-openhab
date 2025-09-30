@@ -6,6 +6,7 @@ class FORMULA_NAME < Formula
   sha256 "$DISTRO_SHA"
   license "EPL-2.0"
 
+  depends_on "openhab-cli"
   depends_on "openjdk@21" => :recommended
 
   conflicts_with $CONFLICTS,
