@@ -2,8 +2,8 @@ class FORMULA_NAME < Formula
   desc "Homebrewed openHAB - Empowering the smart home"
   homepage "https://www.openhab.org/"
   url "$DISTRO_URL"
-  sha256 "$DISTRO_SHA"
   version "$VERSION"
+  sha256 "$DISTRO_SHA"
   license "EPL-2.0"
 
   depends_on "openjdk@21" => :recommended
