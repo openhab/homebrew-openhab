@@ -354,7 +354,6 @@ class FORMULA_NAME < Formula
     openhab_conf.mkpath
     openhab_userdata.mkpath
     openhab_logs.mkpath
-    openhab_backups.mkpath
 
     current_version = read_version(openhab_userdata/"etc/version.properties")
     new_version = read_version(pkgshare/"userdata/etc/version.properties")
@@ -365,7 +364,7 @@ class FORMULA_NAME < Formula
       scan_versioning_list current_version, "PRE", "Performing pre-update tasks for version"
     end
 
-    # Copy default configuration & userdata
+    # Copy default configuration and system files
     ohai "Installing default configuration ..."
     install_default_file
     install_default_configuration
@@ -376,8 +375,10 @@ class FORMULA_NAME < Formula
       ohai "Updating system files ..."
       update_system_files
     end
+    # Ensure the backup directory exists (must NOT be done before copying the system files)
+    openhab_backups.mkpath
 
-    # Clean-up default configuration & system files
+    # Clean up default configuration and system files from their temporary location
     rm_r pkgshare
 
     ohai "Clearing cache ..."
