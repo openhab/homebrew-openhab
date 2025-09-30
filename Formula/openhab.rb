@@ -1,4 +1,4 @@
-# DO NOT EDIT MANUALLY. Instead edit the Template/openhab.rb file.
+# DO NOT EDIT MANUALLY. Instead, edit the Template/openhab.rb file.
 class Openhab < Formula
   desc "Homebrewed openHAB - Empowering the smart home"
   homepage "https://www.openhab.org/"
@@ -47,7 +47,7 @@ class Openhab < Formula
     openhab_home.install "start.sh", "start_debug.sh"
     openhab_home.install "runtime"
 
-    # Install empty add-ons folder if not present
+    # Install the add-ons folder if not present
     openhab_home.install "addons" unless Dir.exist?(openhab_home/"addons")
 
     # Save default configuration & userdata for post_install
@@ -64,7 +64,7 @@ class Openhab < Formula
     chmod 0755, bin/"openhab"
   end
 
-  # Immeditately aborts Formula execution if an instance of openHAB is running.
+  # Immediately aborts Formula execution if an instance of openHAB is running.
   def check_running
     running_processes = `pgrep -f "openhab.*java"`.strip
 
@@ -163,8 +163,6 @@ class Openhab < Formula
       line.strip!
       next if line.empty?
 
-      # works till here
-
       case line
       when "[[#{section}]]"
         in_section = true
@@ -197,11 +195,11 @@ class Openhab < Formula
     end
   end
 
-  # Installs the default configuration from the distro tarvall to the configuration directory.
+  # Installs the default configuration from the distro tarball to the configuration directory.
   #
   # This method copies all files from the tarballs `conf` directory to `$OPENHAB_CONF`.
   # - If a file already exists and is identical, it is skipped.
-  # - If a file exists but is different, it is installed with a `.dist-new` extension and a warning is issued.
+  # - If a file exists but is different, it is installed with a `.dist-new` extension, and a warning is issued.
   def install_default_configuration
     src = pkgshare/"conf"
     src.find do |path|
