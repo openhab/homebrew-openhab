@@ -17,11 +17,11 @@ class OpenhabMilestone < Formula
   end
 
   def openhab_addons
-    libexec/"addons"
+    openhab_home/"addons"
   end
 
   def openhab_runtime
-    libexec/"runtime"
+    openhab_home/"runtime"
   end
 
   def openhab_conf
@@ -30,6 +30,10 @@ class OpenhabMilestone < Formula
 
   def openhab_userdata
     var/"lib/openhab"
+  end
+
+  def openhab_backups
+    openhab_userdata/"backups"
   end
 
   def openhab_logs
@@ -53,6 +57,18 @@ class OpenhabMilestone < Formula
 
     # Save default configuration & userdata for post_install
     pkgshare.install "conf", "userdata"
+
+    # Write path variables to an env file
+    env_file = openhab_home/"env"
+    env_file.write <<~EOS
+      OPENHAB_HOME="#{openhab_home}"
+      OPENHAB_CONF="#{openhab_conf}"
+      OPENHAB_RUNTIME="#{openhab_runtime}"
+      OPENHAB_USERDATA="#{openhab_userdata}"
+      OPENHAB_LOGDIR="#{openhab_logs}"
+      OPENHAB_BACKUPS="#{openhab_backups}"
+      JAVA_HOME="#{Formula["openjdk@21"].opt_prefix}"
+    EOS
 
     # Wrapper script for launching openHAB
     (bin/"openhab").write_env_script openhab_home/"start.sh",
@@ -196,6 +212,46 @@ class OpenhabMilestone < Formula
     end
   end
 
+  # Installs the `$OPENHAB_CONF/default` file.
+  # It is the equivalent of the `/etc/default/openhab` file on Deb/Rpm installations.
+  #
+  # Adapted from the [openHAB Linuxpkg resources](https://github.com/openhab/openhab-linuxpkg/blob/main/resources/etc/default/openhab).
+  def install_default_file
+    default_file = openhab_conf/"default"
+
+    return if default_file.exist?
+
+    default_file.write <<~EOS
+      # openHAB service options
+
+      #########################
+      ## PORTS
+      ## The ports openHAB will bind its HTTP/HTTPS web server to.
+
+      OPENHAB_HTTP_PORT=8080
+      OPENHAB_HTTPS_PORT=8443
+
+      #########################
+      ## HTTP(S) LISTEN ADDRESS
+      ##  The listen address used by the HTTP(S) server.
+      ##  0.0.0.0 (default) allows a connection from any location
+      ##  127.0.0.1 only allows the local machine to connect
+
+      OPENHAB_HTTP_ADDRESS=0.0.0.0
+
+      #########################
+      ## JAVA OPTIONS
+      ## Additional options for the JAVA_OPTS environment variable.
+      ## These will be appended to the execution of the openHAB Java runtime in front of all other options.
+      ##
+      ## A couple of independent examples:
+      ##   EXTRA_JAVA_OPTS="-Dgnu.io.rxtx.SerialPorts=/dev/ttyZWAVE:/dev/ttyUSB0:/dev/ttyS0:/dev/ttyS2:/dev/ttyACM0:/dev/ttyAMA0"
+      ##   EXTRA_JAVA_OPTS="-Djna.library.path=/lib/arm-linux-gnueabihf/ -Duser.timezone=Europe/Berlin -Dgnu.io.rxtx.SerialPorts=/dev/ttyZWave"
+
+      EXTRA_JAVA_OPTS=""
+    EOS
+  end
+
   # Installs the default configuration from the distro tarball to the configuration directory.
   #
   # This method copies all files from the tarballs `conf` directory to `$OPENHAB_CONF`.
@@ -299,6 +355,7 @@ class OpenhabMilestone < Formula
     openhab_conf.mkpath
     openhab_userdata.mkpath
     openhab_logs.mkpath
+    openhab_backups.mkpath
 
     current_version = read_version(openhab_userdata/"etc/version.properties")
     new_version = read_version(pkgshare/"userdata/etc/version.properties")
@@ -311,6 +368,7 @@ class OpenhabMilestone < Formula
 
     # Copy default configuration & userdata
     ohai "Installing default configuration ..."
+    install_default_file
     install_default_configuration
     if openhab_userdata.children.empty?
       ohai "Installing system files ..."
@@ -349,10 +407,11 @@ class OpenhabMilestone < Formula
 
       Directories:
         OPENHAB_HOME:     #{openhab_home}
+        OPENHAB_CONF:     #{openhab_conf}
         OPENHAB_RUNTIME:  #{openhab_runtime}
         OPENHAB_USERDATA: #{openhab_userdata}
-        OPENHAB_CONF:     #{openhab_conf}
-        OPENHAB_LOGS:     #{openhab_logs}
+        OPENHAB_LOGDIR:   #{openhab_logs}
+        OPENHAB_BACKUPS:  #{openhab_backups}
 
       To run openHAB manually:
         openhab
