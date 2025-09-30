@@ -43,10 +43,6 @@ jobs:
 
       - name: Run build script
         run: Template/build
-        env:
-          OPENHAB_VERSION: ${{ env.OPENHAB_VERSION }}
-          OPENHAB_TESTING_VERSION: ${{ env.OPENHAB_TESTING_VERSION }}
-          OPENHAB_SNAPSHOT_VERSION: ${{ env.OPENHAB_SNAPSHOT_VERSION }}
 
       - name: Check for changed Formulae
         id: formulae-changed-files
@@ -134,10 +130,3 @@ jobs:
       - run: brew test-bot --only-tap-syntax
       - run: brew test-bot --only-formulae
         if: github.event_name == 'pull_request'
-
-      - name: Upload bottles as artifact
-        if: always() && github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: bottles_${{ matrix.os }}
-          path: '*.bottle.*'
