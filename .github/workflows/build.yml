@@ -32,9 +32,13 @@ jobs:
   generate-formulae:
     name: Generate Formulae from Template
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          fetch-depth: '0'
 
       - name: Calculate version tag
         run: |
@@ -71,8 +75,9 @@ jobs:
 
           # Delete local and remote tag if it exists
           if git rev-parse "$VERSION_TAG" >/dev/null 2>&1; then
+            echo "Tag $VERSION_TAG already exists, deleting..."
             git tag -d "$VERSION_TAG"
-            git push --delete origin "$VERSION_TAG"
+            git push --delete origin "$VERSION_TAG" || true
           fi
 
           # Create new tag and push
