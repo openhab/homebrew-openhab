@@ -15,14 +15,19 @@ Add the `openhab/openhab` tap to Homebrew:
 brew tap openhab/openhab
 ```
 
-Next, install openHAB:
+Next, install a version of openHAB:
 
 ```shell
+# openHAB stable:
 brew install openhab
+# openHAB milestone:
+brew install openhab-milestone
 ```
+
+Information about the formula, e.g. how to enable the service, can be retrieved with `brew info openhab` resp. `brew info openhab-milestone`.
 
 ## Documentation
 
 - [openHAB](https://www.openhab.org/docs)
 - Homebrew: `brew help`, `man brew` or check [Homebrew's documentation](https://docs.brew.sh)
-- Homebrew Formulae: Check the [Homebrew Formula Cookbook](https://docs.brew.sh/Formula-Cookbook)
+- Homebrew Formula: Check the [Homebrew Formula Cookbook](https://docs.brew.sh/Formula-Cookbook)
