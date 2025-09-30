@@ -1,3 +1,4 @@
+# DO NOT EDIT MANUALLY. Instead edit the Template/openhab.rb file.
 class Openhab < Formula
   desc "Homebrewed openHAB - Empowering the smart home"
   homepage "https://www.openhab.org/"

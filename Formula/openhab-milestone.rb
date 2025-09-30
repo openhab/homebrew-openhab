@@ -1,9 +1,10 @@
+# DO NOT EDIT MANUALLY. Instead edit the Template/openhab.rb file.
 class OpenhabMilestone < Formula
   desc "Homebrewed openHAB - Empowering the smart home"
   homepage "https://www.openhab.org/"
   url "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab/5.1.0.M1/openhab-5.1.0.M1.tar.gz"
-  sha256 "a65a7ea15a166567b2e9863a327c25d152a6c0fff6eb30d5c4ac6ad2a544e419"
   version "5.1.0.M1"
+  sha256 "a65a7ea15a166567b2e9863a327c25d152a6c0fff6eb30d5c4ac6ad2a544e419"
   license "EPL-2.0"
 
   depends_on "openjdk@21" => :recommended
