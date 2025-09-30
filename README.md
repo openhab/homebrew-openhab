@@ -10,7 +10,9 @@ This repository provides Homebrew formulae to install openHAB with the [Homebrew
 For information about the general openHAB package, please visit the [openhab-distro GitHub repo](https://github.com/openhab/openhab-distro).
 For general information about openHAB, please visit the [openHAB homepage](https://www.openhab.org).
 
-## How to use?
+## Usage
+
+### Installing openHAB
 
 If you are on Linux, it is recommended to use the APT or RPM packages, as APT and RPM are way more sophisticated than our Homebrew formulae.
 
@@ -29,10 +31,14 @@ brew install openhab
 brew install openhab-milestone
 ```
 
+Information about the formula, e.g. how to enable the service, can be retrieved with `brew info openhab` resp. `brew info openhab-milestone`.
+
+#### Installing a previous version
+
 To install a previous stable version, you can check out the tagged version of the tap (example for openHAB 5.0):
 
 ```shell
-git -C $(brew --prefix)/Homebrew/Library/Taps/openhab/homebrew-openhab checkout v5.0
+git -C $(brew --prefix)/Homebrew/Library/Taps/openhab/homebrew-openhab checkout v5.0 Formula/openhab.rb
 ```
 
 To switch back to the HEAD of the tap (i.e. current stable or milestone), you can run:
@@ -41,7 +47,32 @@ To switch back to the HEAD of the tap (i.e. current stable or milestone), you ca
 git -C $(brew --prefix)/Homebrew/Library/Taps/openhab/homebrew-openhab checkout main && git -C $(brew --prefix)/Homebrew/Library/Taps/openhab/homebrew-openhab pull
 ```
 
-Information about the formula, e.g. how to enable the service, can be retrieved with `brew info openhab` resp. `brew info openhab-milestone`.
+### Running as a service
+
+As mentioned by `brew info openhab` resp. `brew info openhab-milestone`, you can enable the service with `brew services start openhab` resp. `brew services start openhab-milestone`.
+This starts the service formula immediately and registers it to launch at login (or boot).
+
+### openHAB CLI
+
+The oopenHAB CLI tool known from the Deb/Rpm packages is also available via Homebrew:
+
+```shell
+$ openhab-cli
+
+Usage:  openhab-cli command [options]
+
+Possible commands:
+  backup [--full] [filename]   -- Stores the current configuration of openHAB.
+  clean-cache                  -- Cleans the openHAB temporary folders.
+  console                      -- Opens the openHAB console.
+  info                         -- Displays distribution information.
+  restore [--textconfig] [--uiconfig] filename
+                               -- Restores openHAB configuration from a backup.
+  showlogs                     -- Displays the log messages of openHAB.
+  start [--debug]              -- Starts openHAB in the terminal.
+  status                       -- Checks to see if openHAB is running.
+  stop                         -- Stops any running instance of openHAB.
+```
 
 ## Documentation
 
