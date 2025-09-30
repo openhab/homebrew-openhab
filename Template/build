@@ -72,7 +72,7 @@ process() {
   cp $SRC "$formulaFile"
 
   # Add header
-  sed -i "1 i\# DO NOT EDIT MANUALLY. Instead edit the Template/openhab.rb file." "$formulaFile"
+  sed -i "1 i\# DO NOT EDIT MANUALLY. Instead, edit the Template/openhab.rb file." "$formulaFile"
 
   # Replace placeholders
   sed -i "s|\FORMULA_NAME|$formulaName|g" "$formulaFile"
