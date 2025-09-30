@@ -16,11 +16,11 @@ class FORMULA_NAME < Formula
   end
 
   def openhab_addons
-    libexec/"addons"
+    openhab_home/"addons"
   end
 
   def openhab_runtime
-    libexec/"runtime"
+    openhab_home/"runtime"
   end
 
   def openhab_conf
@@ -29,6 +29,10 @@ class FORMULA_NAME < Formula
 
   def openhab_userdata
     var/"lib/openhab"
+  end
+
+  def openhab_backups
+    openhab_userdata/"backups"
   end
 
   def openhab_logs
@@ -52,6 +56,18 @@ class FORMULA_NAME < Formula
 
     # Save default configuration & userdata for post_install
     pkgshare.install "conf", "userdata"
+
+    # Write path variables to an env file
+    env_file = openhab_home/"env"
+    env_file.write <<~EOS
+      OPENHAB_HOME=#{openhab_home}
+      OPENHAB_CONF=#{openhab_conf}
+      OPENHAB_RUNTIME=#{openhab_runtime}
+      OPENHAB_USERDATA=#{openhab_userdata}
+      OPENHAB_LOGDIR=#{openhab_logs}
+      OPENHAB_BACKUPS=#{openhab_backups}
+      JAVA_HOME=#{Formula["openjdk@21"].opt_prefix}
+    EOS
 
     # Wrapper script for launching openHAB
     (bin/"openhab").write_env_script openhab_home/"start.sh",
@@ -298,6 +314,7 @@ class FORMULA_NAME < Formula
     openhab_conf.mkpath
     openhab_userdata.mkpath
     openhab_logs.mkpath
+    openhab_backups.mkpath
 
     current_version = read_version(openhab_userdata/"etc/version.properties")
     new_version = read_version(pkgshare/"userdata/etc/version.properties")
@@ -348,10 +365,11 @@ class FORMULA_NAME < Formula
 
       Directories:
         OPENHAB_HOME:     #{openhab_home}
+        OPENHAB_CONF:     #{openhab_conf}
         OPENHAB_RUNTIME:  #{openhab_runtime}
         OPENHAB_USERDATA: #{openhab_userdata}
-        OPENHAB_CONF:     #{openhab_conf}
-        OPENHAB_LOGS:     #{openhab_logs}
+        OPENHAB_LOGDIR:   #{openhab_logs}
+        OPENHAB_BACKUPS:  #{openhab_backups}
 
       To run openHAB manually:
         openhab
