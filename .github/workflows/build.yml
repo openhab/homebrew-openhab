@@ -29,6 +29,11 @@ jobs:
         run: |
           if shellcheck -x -s bash Template/build; then echo "OK"; else echo "FAILED"; exit 1; fi
 
+      - name: "ShellCheck Bin/openhab-cli"
+        shell: bash
+        run: |
+          if shellcheck -x -s bash Bin/openhab-cli; then echo "OK"; else echo "FAILED"; exit 1; fi
+
   generate-formulae:
     name: Generate Formulae from Template
     runs-on: ubuntu-latest
