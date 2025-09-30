@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Run Build Script
         run: Template/build
@@ -49,7 +49,6 @@ jobs:
           git push
 
       - name: Upload Formulae
-        if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: formulae
@@ -82,9 +81,8 @@ jobs:
           key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
           restore-keys: ${{ matrix.os }}-rubygems-
 
-      # Allow checking Formulae changes in PR without committing them
+      # Allow checking Formulae changes without needing the latest formulae changes being commited or pushed (yet)
       - name: Download Formulae
-        if: github.event_name == 'pull_request'
         uses: actions/download-artifact@v5
         with:
           name: formulae
