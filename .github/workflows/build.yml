@@ -21,7 +21,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Run Build Script
+      - name: Calculate version tag
+        run: |
+          VERSION_TAG=$(echo "$OPENHAB_VERSION" | sed -E 's/^([0-9]+)\.([0-9]+)\..*/v\1.\2/')
+          echo VERSION_TAG="$VERSION_TAG" >> "$GITHUB_ENV"
+
+      - name: Run build script
         run: Template/build
         env:
           OPENHAB_VERSION: ${{ env.OPENHAB_VERSION }}
@@ -41,12 +46,27 @@ jobs:
           git config user.name "openhab-bot"
           git config user.email "bot@openhab.org"
 
-      - name: Commit and Push
+      - name: Commit and push
         if: github.event_name == 'push' && steps.formulae-changed-files.outputs.changed_files != ''
         run: |
           git add Formula/*
           git commit -m "[ci] Automated Formulae update"
           git push
+
+      - name: Create or update version tag
+        if: github.event_name == 'push' && steps.formulae-changed-files.outputs.changed_files != ''
+        run: |
+          VERSION_TAG="${{ env.VERSION_TAG }}"
+
+          # Delete local and remote tag if it exists
+          if git rev-parse "$VERSION_TAG" >/dev/null 2>&1; then
+            git tag -d "$VERSION_TAG"
+            git push --delete origin "$VERSION_TAG"
+          fi
+
+          # Create new tag and push
+          git tag "$VERSION_TAG"
+          git push origin "$VERSION_TAG"
 
       - name: Upload Formulae
         uses: actions/upload-artifact@v4
