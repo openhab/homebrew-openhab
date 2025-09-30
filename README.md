@@ -1,5 +1,7 @@
 # openHAB Homebrew Tap
 
+<img align="right" width="220" src="logo.svg" alt="Homebrewed openHAB logo" />
+
 [![CI Build](https://github.com/openhab/homebrew-openhab/actions/workflows/build.yml/badge.svg)](https://github.com/openhab/homebrew-openhab/actions/workflows/build.yml)
 [![EPL-2.0](https://img.shields.io/badge/license-EPL%202-green.svg)](https://opensource.org/licenses/EPL-2.0)
 
