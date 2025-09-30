@@ -72,13 +72,13 @@ class OpenhabMilestone < Formula
     EOS
 
     # Wrapper script for launching openHAB
-    (bin/"openhab").write_env_script openhab_home/"start.sh",
-      OPENHAB_HOME:     openhab_home,
-      OPENHAB_CONF:     openhab_conf,
-      OPENHAB_RUNTIME:  openhab_runtime,
-      OPENHAB_USERDATA: openhab_userdata,
-      OPENHAB_LOGDIR:   openhab_logs,
-      JAVA_HOME:        Formula["openjdk@21"].opt_prefix
+    (bin/"openhab").write <<~EOS
+      #!/bin/sh
+      echo Launching the openHAB runtime...
+      exec env $(grep -v '^\s*#' "#{env_file}" | xargs) \
+        $(grep -v '^\s*#' "#{openhab_conf}/default"| xargs) \
+        #{openhab_runtime}/bin/karaf "$@"
+    EOS
     chmod 0755, bin/"openhab"
   end
 
@@ -394,10 +394,11 @@ class OpenhabMilestone < Formula
   end
 
   service do
-    run opt_bin/"openhab"
-    keep_alive true
-    launch_only_once true
+    run [opt_bin/"openhab", "daemon"]
     working_dir opt_libexec
+    log_path var/"log/openhab/homebrew.openhab.service.out.log"
+    error_log_path var/"log/openhab/homebrew.openhab.service.err.log"
+    keep_alive crashed: true
   end
 
   def caveats
