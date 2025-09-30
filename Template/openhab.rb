@@ -393,10 +393,11 @@ class FORMULA_NAME < Formula
   end
 
   service do
-    run opt_bin/"openhab"
-    keep_alive true
-    launch_only_once true
+    run [opt_bin/"openhab", "daemon"]
     working_dir opt_libexec
+    log_path var/"log/openhab/homebrew.openhab.service.out.log"
+    error_log_path var/"log/openhab/homebrew.openhab.service.err.log"
+    keep_alive crashed: true
   end
 
   def caveats
