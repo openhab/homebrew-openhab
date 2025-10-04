@@ -74,10 +74,14 @@ class OpenhabMilestone < Formula
     # Wrapper script for launching openHAB
     (bin/"openhab").write <<~EOS
       #!/bin/sh
-      echo Launching the openHAB runtime...
-      exec env $(grep -v '^\s*#' "#{env_file}" | xargs) \
-        $(grep -v '^\s*#' "#{openhab_conf}/default"| xargs) \
-        #{openhab_runtime}/bin/karaf "$@"
+      (
+        echo Launching the openHAB runtime...
+        set -a
+        . #{env_file}
+        . #{openhab_conf}/default
+        set +a
+        exec #{openhab_runtime}/bin/karaf "$@"
+      )
     EOS
     chmod 0755, bin/"openhab"
   end
