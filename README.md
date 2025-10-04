@@ -54,7 +54,7 @@ This starts the service formula immediately and registers it to launch at login 
 
 ### openHAB CLI
 
-The oopenHAB CLI tool known from the Deb/Rpm packages is also available via Homebrew:
+The openHAB CLI tool known from the Deb/Rpm packages is also available via Homebrew:
 
 ```shell
 $ openhab-cli
