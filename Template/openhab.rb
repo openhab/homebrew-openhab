@@ -252,7 +252,7 @@ class FORMULA_NAME < Formula
       ##   EXTRA_JAVA_OPTS="-Dgnu.io.rxtx.SerialPorts=/dev/ttyZWAVE:/dev/ttyUSB0:/dev/ttyS0:/dev/ttyS2:/dev/ttyACM0:/dev/ttyAMA0"
       ##   EXTRA_JAVA_OPTS="-Djna.library.path=/lib/arm-linux-gnueabihf/ -Duser.timezone=Europe/Berlin -Dgnu.io.rxtx.SerialPorts=/dev/ttyZWave"
 
-      EXTRA_JAVA_OPTS=""
+      EXTRA_JAVA_OPTS="-Djna.library.path=#{HOMEBREW_PREFIX}/lib/"
     EOS
   end
 
