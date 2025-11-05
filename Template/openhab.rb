@@ -91,7 +91,7 @@ class FORMULA_NAME < Formula
 
     unless running_processes.empty?
       odie "openHAB is running! Please stop the process before continuing.\n" \
-           "If openHAB is running as Homebrew service, execute brew services stop --keep openhab"
+           "If openHAB is running as Homebrew service, execute brew services stop --keep $SERVICE_NAME"
     end
   end
 
@@ -429,6 +429,12 @@ class FORMULA_NAME < Formula
         brew pin $SERVICE_NAME
       To unpin the version:
         brew unpin $SERVICE_NAME
+  
+      It is also recommended to pin the OpenJDK version as any change to the Java package revokes the
+      Local Network access permission for Java. To enable it again, graphically log into macOS, go to
+      the Settings -> Privacy & Security -> Local Network section and enable the toggle for Java.
+      To pin the OpenJDK version:
+        brew pin openjdk@21
 
       To install the add-ons KAR for offline use:
         curl -L --output-dir #{openhab_addons} -o $ADDONS_KAR $ADDONS_URL

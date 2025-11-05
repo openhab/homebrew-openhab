@@ -31,6 +31,22 @@ brew install openhab
 brew install openhab-milestone
 ```
 
+The `openhab`/`openhab-milestone` formulae automatically installs the `openhab-cli` tool and OpenJDK as JRE.
+It is recommended to pin the openHAB formula version, as openHAB upgrades can potentially include breaking changes:
+
+```shell
+# openHAB stable:
+brew pin openhab
+# openHAB milestone:
+brew pin openhab-milestone
+```
+
+On macOS, the OpenJDK formula version should be pinned as well, because after a OpenJDK upgrade, the Local Network Access permission needs to be granted again through _Settings_ -> _Privacy & Security_ -> _Local Network_:
+
+```shell
+brew pin openjdk@21
+```
+
 Information about the formula, e.g. how to enable the service, can be retrieved with `brew info openhab` resp. `brew info openhab-milestone`.
 
 #### Installing a previous version
