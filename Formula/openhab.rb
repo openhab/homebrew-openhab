@@ -429,6 +429,12 @@ class Openhab < Formula
         brew pin openhab
       To unpin the version:
         brew unpin openhab
+  
+      It is also recommended to pin the OpenJDK version as any change to the Java package revokes the
+      Local Network access permission for Java. To enable it again, graphically log into macOS, go to
+      the Settings -> Privacy & Security -> Local Network section and enable the toggle for Java.
+      To pin the OpenJDK version:
+        brew pin openjdk@21
 
       To install the add-ons KAR for offline use:
         curl -L --output-dir #{openhab_addons} -o openhab-addons-5.0.2.kar https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab-addons/5.0.2/openhab-addons-5.0.2.kar
