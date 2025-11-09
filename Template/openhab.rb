@@ -71,7 +71,7 @@ class FORMULA_NAME < Formula
     EOS
 
     # Wrapper script for launching openHAB
-    (bin/"openhab").write <<~EOS
+    (bin/"$SERVICE_NAME").write <<~EOS
       #!/bin/sh
       (
         echo Launching the openHAB runtime...
@@ -82,7 +82,7 @@ class FORMULA_NAME < Formula
         exec #{openhab_runtime}/bin/karaf "$@"
       )
     EOS
-    chmod 0755, bin/"openhab"
+    chmod 0755, bin/"$SERVICE_NAME"
   end
 
   # Immediately aborts Formula execution if an instance of openHAB is running.
@@ -397,7 +397,7 @@ class FORMULA_NAME < Formula
   end
 
   service do
-    run [opt_bin/"openhab", "daemon"]
+    run [opt_bin/"$SERVICE_NAME", "daemon"]
     working_dir opt_libexec
     log_path var/"log/openhab/homebrew.openhab.service.out.log"
     error_log_path var/"log/openhab/homebrew.openhab.service.err.log"
@@ -420,7 +420,7 @@ class FORMULA_NAME < Formula
         OPENHAB_BACKUPS:  #{openhab_backups}
 
       To run openHAB manually:
-        openhab
+        $SERVICE_NAME
 
       To run openHAB as a background service:
         brew services start $SERVICE_NAME
@@ -429,7 +429,7 @@ class FORMULA_NAME < Formula
         brew pin $SERVICE_NAME
       To unpin the version:
         brew unpin $SERVICE_NAME
-  
+
       It is also recommended to pin the OpenJDK version as any change to the Java package revokes the
       Local Network access permission for Java. To enable it again, graphically log into macOS, go to
       the Settings -> Privacy & Security -> Local Network section and enable the toggle for Java.
