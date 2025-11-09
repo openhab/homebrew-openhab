@@ -72,7 +72,7 @@ class OpenhabMilestone < Formula
     EOS
 
     # Wrapper script for launching openHAB
-    (bin/"openhab").write <<~EOS
+    (bin/"openhab-milestone").write <<~EOS
       #!/bin/sh
       (
         echo Launching the openHAB runtime...
@@ -83,7 +83,7 @@ class OpenhabMilestone < Formula
         exec #{openhab_runtime}/bin/karaf "$@"
       )
     EOS
-    chmod 0755, bin/"openhab"
+    chmod 0755, bin/"openhab-milestone"
   end
 
   # Immediately aborts Formula execution if an instance of openHAB is running.
@@ -398,7 +398,7 @@ class OpenhabMilestone < Formula
   end
 
   service do
-    run [opt_bin/"openhab", "daemon"]
+    run [opt_bin/"openhab-milestone", "daemon"]
     working_dir opt_libexec
     log_path var/"log/openhab/homebrew.openhab.service.out.log"
     error_log_path var/"log/openhab/homebrew.openhab.service.err.log"
@@ -421,7 +421,7 @@ class OpenhabMilestone < Formula
         OPENHAB_BACKUPS:  #{openhab_backups}
 
       To run openHAB manually:
-        openhab
+        openhab-milestone
 
       To run openHAB as a background service:
         brew services start openhab-milestone
@@ -430,7 +430,7 @@ class OpenhabMilestone < Formula
         brew pin openhab-milestone
       To unpin the version:
         brew unpin openhab-milestone
-  
+
       It is also recommended to pin the OpenJDK version as any change to the Java package revokes the
       Local Network access permission for Java. To enable it again, graphically log into macOS, go to
       the Settings -> Privacy & Security -> Local Network section and enable the toggle for Java.

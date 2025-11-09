@@ -429,7 +429,7 @@ class Openhab < Formula
         brew pin openhab
       To unpin the version:
         brew unpin openhab
-  
+
       It is also recommended to pin the OpenJDK version as any change to the Java package revokes the
       Local Network access permission for Java. To enable it again, graphically log into macOS, go to
       the Settings -> Privacy & Security -> Local Network section and enable the toggle for Java.
