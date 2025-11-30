@@ -2,8 +2,8 @@
 class Openhab < Formula
   desc "Homebrewed openHAB - Empowering the smart home"
   homepage "https://www.openhab.org/"
-  url "https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab/5.0.2/openhab-5.0.2.tar.gz"
-  sha256 "9d5d8815951d1638a4cb08d430226ec670179cbbd4620cb16d0251b4bb9f9377"
+  url "https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab/5.0.3/openhab-5.0.3.tar.gz"
+  sha256 "c75157d4a412f6fdc28924dee562244e728ea2c51b75a86c362f1c5adc62fcf1"
   license "EPL-2.0"
 
   depends_on "openhab-cli"
@@ -437,9 +437,9 @@ class Openhab < Formula
         brew pin openjdk@21
 
       To install the add-ons KAR for offline use:
-        curl -L --output-dir #{openhab_addons} -o openhab-addons-5.0.2.kar https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab-addons/5.0.2/openhab-addons-5.0.2.kar
+        curl -L --output-dir #{openhab_addons} -o openhab-addons-5.0.3.kar https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab-addons/5.0.3/openhab-addons-5.0.3.kar
       To verify its checksum:
-        echo "0da4a8887afe0b4c9808f35cc033290f608c25eb99bcf6943e73ab59e78894d0 #{openhab_addons}/openhab-addons-5.0.2.kar" | sha256sum -c -
+        echo "94418677d1b4938da42ef7b88fd72c666ac3829c648aba2930af61625e657368 #{openhab_addons}/openhab-addons-5.0.3.kar" | sha256sum -c -
     EOS
   end
 

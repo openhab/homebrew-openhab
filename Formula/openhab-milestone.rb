@@ -2,9 +2,9 @@
 class OpenhabMilestone < Formula
   desc "Homebrewed openHAB - Empowering the smart home"
   homepage "https://www.openhab.org/"
-  url "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab/5.1.0.M2/openhab-5.1.0.M2.tar.gz"
-  version "5.1.0.M2"
-  sha256 "fcd7f521de997fc25a8f398d5b1b84764ead2a3960575a2b93c04600a68ab287"
+  url "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab/5.1.0.M3/openhab-5.1.0.M3.tar.gz"
+  version "5.1.0.M3"
+  sha256 "c015ffffe4fd8ea98499458da16c8e64e3b7911ff6351a4b3a8085ebc122a836"
   license "EPL-2.0"
 
   depends_on "openhab-cli"
@@ -438,9 +438,9 @@ class OpenhabMilestone < Formula
         brew pin openjdk@21
 
       To install the add-ons KAR for offline use:
-        curl -L --output-dir #{openhab_addons} -o openhab-addons-5.1.0.M2.kar https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab-addons/5.1.0.M2/openhab-addons-5.1.0.M2.kar
+        curl -L --output-dir #{openhab_addons} -o openhab-addons-5.1.0.M3.kar https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab-addons/5.1.0.M3/openhab-addons-5.1.0.M3.kar
       To verify its checksum:
-        echo "39009119897f4b6e997c85e323aea9f7af3ee7a4e1f9df82ef0bc6d9b417abd1 #{openhab_addons}/openhab-addons-5.1.0.M2.kar" | sha256sum -c -
+        echo "9d4e0996e21d0db372e6d8cc0b0e0159ce22a455b255522cf3f2b88ca3288b7c #{openhab_addons}/openhab-addons-5.1.0.M3.kar" | sha256sum -c -
     EOS
   end
 
