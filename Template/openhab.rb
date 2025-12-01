@@ -70,15 +70,20 @@ class FORMULA_NAME < Formula
       JAVA_HOME="#{Formula["openjdk@21"].opt_prefix}"
     EOS
 
-    # Wrapper script for launching openHAB
+    # Wrapper script for launching openHAB:
+    # Supports both starting openHAB as a daemon and running it in the foreground.
+    # Homebrew service is able to stop the daemon properly;
+    # when running in the foreground, the logout command can be used to exit.
     (bin/"$SERVICE_NAME").write <<~EOS
       #!/bin/sh
       (
-        echo Launching the openHAB runtime...
+        # Load environment variables
         set -a
         . #{env_file}
         . #{openhab_conf}/default
         set +a
+        # Launch openHAB
+        echo $(date +%Y-%m-%dT%H:%M:%S) Launching the openHAB runtime...
         exec #{openhab_runtime}/bin/karaf "$@"
       )
     EOS
