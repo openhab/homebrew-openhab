@@ -403,7 +403,9 @@ class OpenhabMilestone < Formula
   end
 
   service do
-    run [opt_bin/"openhab-milestone", "daemon"]
+    # Start Karaf in server mode to run as foreground process, but do not open the console
+    # See https://svn.apache.org/repos/asf/karaf/site/production/manual/latest/start-stop.html
+    run [opt_bin/"openhab-milestone", "server"]
     working_dir opt_libexec
     log_path var/"log/openhab/homebrew.openhab.service.out.log"
     error_log_path var/"log/openhab/homebrew.openhab.service.err.log"
