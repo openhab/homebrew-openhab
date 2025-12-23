@@ -77,7 +77,8 @@ process() {
   # Replace placeholders
   sed -i "s|\FORMULA_NAME|$formulaName|g" "$formulaFile"
 
-  if [[ "$formulaName" == "Openhab" ]]; then
+  if [[ $formulaName == "Openhab" || $OPENHAB_TESTING_VERSION == *RC+([0-9]) ]]; then
+    # Remove version field as Homebrew is able to determine version from URL
     sed -i "/version \"\$VERSION\"/d" "$formulaFile"
   else
     sed -i "s|\$VERSION|$OPENHAB_TESTING_VERSION|g" "$formulaFile"
