@@ -3,7 +3,6 @@ class OpenhabMilestone < Formula
   desc "Homebrewed openHAB - Empowering the smart home"
   homepage "https://www.openhab.org/"
   url "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab/5.1.0.RC3/openhab-5.1.0.RC3.tar.gz"
-  version "5.1.0.RC3"
   sha256 "c21961507fa97c5c4a93b843fb47b8be9a4977edc5e58be30ccda99e1fbf4dbe"
   license "EPL-2.0"
 
