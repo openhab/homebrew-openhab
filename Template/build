@@ -29,18 +29,27 @@ if [[ -z "${OPENHAB_SNAPSHOT_VERSION:-}" ]]; then
   exit 1
 fi
 
+## Function to convert from kamelCase or PascalCase to kebab-case.
+##
+##    to_kebab input
+##
 to_kebab() {
   echo "$1" \
     | sed 's/\([a-z]\)\([A-Z]\)/\1-\2/g' \
     | tr '[:upper:]' '[:lower:]'
 }
 
+## Function to generate a Formula from the template.
+##
+##     process formulaName conflicts distroUrl addOnsUrl OPENHAB_TESTING_EXPLICIT_VERSION
+##
 process() {
   local formulaName=$1
   local formulaNameAsKebap
   formulaNameAsKebap=$(to_kebab "$formulaName")
   local formulaFile
   formulaFile=$DEST_DIR/$formulaNameAsKebap".rb"
+  # Conflicting Formulae
   local conflicts=$2
   # openHAB distribution
   local distroUrl=$3
@@ -52,6 +61,8 @@ process() {
   local addOnsKar
   addOnsKar=$(basename "$addOnsUrl")
   local addOnsSha
+  # (Optionally) Explicit version to set
+  local explicitVersion=${5:-}
 
   echo "Building Formula file for $formulaNameAsKebap from template:"
 
@@ -77,11 +88,12 @@ process() {
   # Replace placeholders
   sed -i "s|\FORMULA_NAME|$formulaName|g" "$formulaFile"
 
-  if [[ $formulaName == "Openhab" || $OPENHAB_TESTING_VERSION == *RC+([0-9]) ]]; then
-    # Remove version field as Homebrew is able to determine version from URL
-    sed -i "/version \"\$VERSION\"/d" "$formulaFile"
+  if [[ -n $explicitVersion ]]; then
+    # Set version explicitly => Homebrew needs explicit version
+    sed -i "s|\$VERSION|$explicitVersion|g" "$formulaFile"
   else
-    sed -i "s|\$VERSION|$OPENHAB_TESTING_VERSION|g" "$formulaFile"
+    # Remove version field => Homebrew is able to determine version from URL
+    sed -i "/version \"\$VERSION\"/d" "$formulaFile"
   fi
 
   sed -i "s|\$CONFLICTS|$conflicts|g" "$formulaFile"
@@ -99,7 +111,23 @@ process \
   "Openhab" "\"openhab-milestone\"" \
   "https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab/$OPENHAB_VERSION/openhab-$OPENHAB_VERSION.tar.gz" \
   "https://openhab.jfrog.io/artifactory/libs-release-local/org/openhab/distro/openhab-addons/$OPENHAB_VERSION/openhab-addons-$OPENHAB_VERSION.kar"
+
+# Determine repository and explicit version for openhab-milestone package
+if [[ $OPENHAB_TESTING_VERSION == *M+([0-9]) ]]; then
+  # Milestone Build:
+  OPENHAB_TESTING_REPO="libs-milestone-local"
+  # Homebrew needs explicit version
+  OPENHAB_TESTING_EXPLICIT_VERSION=$OPENHAB_TESTING_VERSION
+elif [[ $OPENHAB_TESTING_VERSION == *RC+([0-9]) ]]; then
+  # Release Candidate Build:
+  OPENHAB_TESTING_REPO="libs-milestone-local"
+else
+  # Stable Build:
+  OPENHAB_TESTING_REPO="libs-release-local"
+fi
+
 process \
   "OpenhabMilestone" "\"openhab\"" \
-  "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab/$OPENHAB_TESTING_VERSION/openhab-$OPENHAB_TESTING_VERSION.tar.gz" \
-  "https://openhab.jfrog.io/artifactory/libs-milestone-local/org/openhab/distro/openhab-addons/$OPENHAB_TESTING_VERSION/openhab-addons-$OPENHAB_TESTING_VERSION.kar"
+  "https://openhab.jfrog.io/artifactory/$OPENHAB_TESTING_REPO/org/openhab/distro/openhab/$OPENHAB_TESTING_VERSION/openhab-$OPENHAB_TESTING_VERSION.tar.gz" \
+  "https://openhab.jfrog.io/artifactory/$OPENHAB_TESTING_REPO/org/openhab/distro/openhab-addons/$OPENHAB_TESTING_VERSION/openhab-addons-$OPENHAB_TESTING_VERSION.kar" \
+  "${OPENHAB_TESTING_EXPLICIT_VERSION:-}"
