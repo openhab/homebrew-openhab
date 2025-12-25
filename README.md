@@ -90,6 +90,17 @@ Possible commands:
   stop                         -- Stops any running instance of openHAB.
 ```
 
+### Troubleshooting
+
+#### Apache Felix File Install
+
+```text
+... [WARN ] [org.apache.felix.fileinstall] - /usr/share/openhab/addons does not exist, please create it.
+... [ERROR] [org.apache.felix.fileinstall] - Cannot create folder /var/lib/openhab/tmp/bundles. Is the folder write-protected?
+```
+
+When observing log messages like the above on startup, ensure proper `felix.fileinstall.dir` and `felix.fileinstall.dir` are set in `/opt/homebrew/var/lib/openhab/config/org/apache/felix/fileinstall/*.config`.
+
 ## Documentation
 
 - [openHAB](https://www.openhab.org/docs)
