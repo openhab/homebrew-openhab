@@ -24,6 +24,11 @@ jobs:
       - name: Setup environment
         run: sudo -E bash -c set
 
+      - name: "ShellCheck .github/scripts/update-version"
+        shell: bash
+        run: |
+          if shellcheck -x -s bash .github/scripts/update-version; then echo "OK"; else echo "FAILED"; exit 1; fi
+
       - name: "ShellCheck Template/build"
         shell: bash
         run: |
