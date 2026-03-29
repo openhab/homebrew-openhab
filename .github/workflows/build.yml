@@ -129,7 +129,7 @@ jobs:
 
       # Allow checking Formulae changes without needing the latest formulae changes being commited or pushed (yet)
       - name: Download Formulae
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: formulae
           path: Formula
