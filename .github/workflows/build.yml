@@ -95,7 +95,7 @@ jobs:
           git push origin "$VERSION_TAG"
 
       - name: Upload Formulae
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: formulae
           path: |
