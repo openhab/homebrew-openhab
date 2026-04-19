@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-VERSION_FILE="${VERSION_FILE:-.openhab.env}"
+VERSION_FILE="${VERSION_FILE:?Error: VERSION_FILE env variable missing.}"
 VERSION="${1:-}"
 
 if [[ -z "$VERSION" ]]; then
