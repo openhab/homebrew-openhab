@@ -12,7 +12,7 @@ on:
         required: true
 
 env:
-  BUILD_WORKFLOW: .github/workflows/build.yml
+  VERSION_FILE: .openhab.env
 
 jobs:
   update-version:
@@ -25,7 +25,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Update version in build.yml
+      - name: Update version in environment file
         shell: bash
         run: .github/scripts/update-version ${{ env.TARGET_VERSION }}
 
@@ -33,7 +33,7 @@ jobs:
         id: changed-files
         run: |
           set -o pipefail
-          changed_files=$(echo -n "$(git diff --name-only HEAD ${{ env.BUILD_WORKFLOW }} && git ls-files --others --exclude-standard ${{ env.BUILD_WORKFLOW }})"|tr '\n' ' ')
+          changed_files=$(echo -n "$(git diff --name-only HEAD ${{ env.VERSION_FILE }} && git ls-files --others --exclude-standard ${{ env.VERSION_FILE }})"|tr '\n' ' ')
           echo changed_files="$changed_files" >> "$GITHUB_OUTPUT"
 
       - name: Configure Git
@@ -45,6 +45,6 @@ jobs:
       - name: Commit and push
         if: steps.changed-files.outputs.changed_files != ''
         run: |
-          git add ${{ env.BUILD_WORKFLOW }}
+          git add ${{ env.VERSION_FILE }}
           git commit -m "[ci] Update openHAB version to ${{ env.TARGET_VERSION }}"
           git push

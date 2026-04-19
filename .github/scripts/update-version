@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-BUILD_WORKFLOW=".github/workflows/build.yml"
+VERSION_FILE="${VERSION_FILE:-.openhab.env}"
 VERSION="${1:-}"
 
 if [[ -z "$VERSION" ]]; then
@@ -10,8 +10,8 @@ if [[ -z "$VERSION" ]]; then
   exit 1
 fi
 
-if [[ ! -f "$BUILD_WORKFLOW" ]]; then
-  echo "Error: $BUILD_WORKFLOW not found."
+if [[ ! -f "$VERSION_FILE" ]]; then
+  echo "Error: $VERSION_FILE not found."
   exit 1
 fi
 
@@ -20,17 +20,17 @@ echo "Processing new release: $VERSION"
 if [[ "$VERSION" == *M+([0-9]) ]] || [[ "$VERSION" == *RC+([0-9]) ]]; then
   echo "Categorized $VERSION as milestone/RC release"
   echo "Updating..."
-  sed -i "s/^[[:space:]]*OPENHAB_TESTING_VERSION:.*/  OPENHAB_TESTING_VERSION: $VERSION/" "$BUILD_WORKFLOW"
+  sed -i "s/^OPENHAB_TESTING_VERSION=.*/OPENHAB_TESTING_VERSION=$VERSION/" "$VERSION_FILE"
 else
   echo "Categorized $VERSION as stable release"
-  CURRENT_VERSION=$(grep -oP '^[[:space:]]*OPENHAB_VERSION:[[:space:]]*\K[0-9.]+' "$BUILD_WORKFLOW")
+  CURRENT_VERSION=$(grep -oP '^OPENHAB_VERSION=\K[0-9.]+' "$VERSION_FILE")
   echo "Current stable release: $CURRENT_VERSION"
 
   # Simple version comparison using sort -V
   # If current version is first in sorted list and not equal to new version, then new version is greater
   if [[ "$(printf '%s\n%s' "$CURRENT_VERSION" "$VERSION" | sort -V | head -n1)" == "$CURRENT_VERSION" && "$CURRENT_VERSION" != "$VERSION" ]]; then
     echo "$VERSION is newer than $CURRENT_VERSION. Updating..."
-    sed -i "s/^[[:space:]]*OPENHAB_VERSION:.*/  OPENHAB_VERSION: $VERSION/" "$BUILD_WORKFLOW"
+    sed -i "s/^OPENHAB_VERSION=.*/OPENHAB_VERSION=$VERSION/" "$VERSION_FILE"
   else
     echo "$VERSION is not newer than $CURRENT_VERSION. Skipping update."
   fi
