@@ -9,9 +9,7 @@ on:
       - main
 
 env:
-  OPENHAB_VERSION: 5.1.3
-  OPENHAB_TESTING_VERSION: 5.2.0.M2
-  OPENHAB_SNAPSHOT_VERSION: 5.2.0
+  VERSION_FILE: openhab.version
 
 jobs:
   shellcheck:
@@ -49,6 +47,18 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: '0'
+
+      - name: Load openHAB versions
+        run: |
+          for key in OPENHAB_VERSION OPENHAB_TESTING_VERSION OPENHAB_SNAPSHOT_VERSION; do
+            line=$(grep "^${key}=" "${{ env.VERSION_FILE }}" | tail -n1 || true)
+            value="${line#*=}"
+            if [[ -z "$line" || -z "$value" || "$value" =~ [[:space:]] ]]; then
+              echo "Missing or invalid ${key} in ${{ env.VERSION_FILE }}"
+              exit 1
+            fi
+            echo "${key}=${value}" >> "$GITHUB_ENV"
+          done
 
       - name: Calculate version tag
         run: |
