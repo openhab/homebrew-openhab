@@ -2,7 +2,11 @@
 
 set -euo pipefail
 
-VERSION_FILE="${VERSION_FILE:?Error: VERSION_FILE env variable missing.}"
+VERSION_FILE="${VERSION_FILE:-}"
+if [[ -z "$VERSION_FILE" ]]; then
+  echo "Error: VERSION_FILE env variable missing."
+  exit 1
+fi
 VERSION="${1:-}"
 
 if [[ -z "$VERSION" ]]; then

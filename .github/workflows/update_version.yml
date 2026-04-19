@@ -25,7 +25,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Update version in environment file
+      - name: Update version in version file
         shell: bash
         run: .github/scripts/update-version ${{ env.TARGET_VERSION }}
 
