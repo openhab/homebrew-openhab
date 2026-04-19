@@ -51,12 +51,13 @@ jobs:
       - name: Load openHAB versions
         run: |
           for key in OPENHAB_VERSION OPENHAB_TESTING_VERSION OPENHAB_SNAPSHOT_VERSION; do
-            line=$(grep -E "^${key}=[^[:space:]].+$" "${{ env.VERSION_FILE }}" | tail -n1 || true)
-            if [[ -z "$line" ]]; then
+            line=$(grep "^${key}=" "${{ env.VERSION_FILE }}" | tail -n1 || true)
+            value="${line#*=}"
+            if [[ -z "$line" || -z "$value" || "$value" =~ [[:space:]] ]]; then
               echo "Missing or invalid ${key} in ${{ env.VERSION_FILE }}"
               exit 1
             fi
-            echo "$line" >> "$GITHUB_ENV"
+            echo "${key}=${value}" >> "$GITHUB_ENV"
           done
 
       - name: Calculate version tag
