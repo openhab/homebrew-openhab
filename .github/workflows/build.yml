@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  VERSION_FILE: .openhab.env
+  VERSION_FILE: openhab.version
 
 jobs:
   shellcheck:

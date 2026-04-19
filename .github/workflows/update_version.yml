@@ -12,7 +12,7 @@ on:
         required: true
 
 env:
-  VERSION_FILE: .openhab.env
+  VERSION_FILE: openhab.version
 
 jobs:
   update-version:
