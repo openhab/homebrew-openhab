@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_call:
 
 env:
   VERSION_FILE: openhab.version
@@ -76,20 +77,20 @@ jobs:
           echo changed_files="$changed_files" >> "$GITHUB_OUTPUT"
 
       - name: Configure Git
-        if: github.event_name == 'push' && steps.formulae-changed-files.outputs.changed_files != ''
+        if: (github.event_name == 'push' || github.event_name == 'workflow_call') && steps.formulae-changed-files.outputs.changed_files != ''
         run: |
           git config user.name "openhab-bot"
           git config user.email "bot@openhab.org"
 
       - name: Commit and push
-        if: github.event_name == 'push' && steps.formulae-changed-files.outputs.changed_files != ''
+        if: (github.event_name == 'push' || github.event_name == 'workflow_call') && steps.formulae-changed-files.outputs.changed_files != ''
         run: |
           git add Formula/*
           git commit -m "[ci] Automated Formulae update"
           git push
 
       - name: Create or update version tag
-        if: github.event_name == 'push' && steps.formulae-changed-files.outputs.changed_files != ''
+        if: (github.event_name == 'push' || github.event_name == 'workflow_call') && steps.formulae-changed-files.outputs.changed_files != ''
         run: |
           VERSION_TAG="${{ env.VERSION_TAG }}"
 
