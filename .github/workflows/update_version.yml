@@ -21,6 +21,8 @@ jobs:
       contents: write
     env:
       TARGET_VERSION: ${{ github.event.inputs.version || github.event.client_payload.version }}
+    outputs:
+      version_updated: ${{ steps.changed-files.outputs.version_updated }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -35,6 +37,11 @@ jobs:
           set -o pipefail
           changed_files=$(echo -n "$(git diff --name-only HEAD ${{ env.VERSION_FILE }} && git ls-files --others --exclude-standard ${{ env.VERSION_FILE }})"|tr '\n' ' ')
           echo changed_files="$changed_files" >> "$GITHUB_OUTPUT"
+          if [[ -n "$changed_files" ]]; then
+            echo "version_updated=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "version_updated=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Configure Git
         if: steps.changed-files.outputs.changed_files != ''
@@ -48,3 +55,14 @@ jobs:
           git add ${{ env.VERSION_FILE }}
           git commit -m "[ci] Update openHAB version to ${{ env.TARGET_VERSION }}"
           git push
+
+  build:
+    needs: update-version
+    if: needs.update-version.outputs.version_updated == 'true'
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+    permissions:
+      actions: read
+      checks: read
+      contents: write
+      pull-requests: read
