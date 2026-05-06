@@ -92,7 +92,7 @@ case "$option" in
   "backup")
     # Run the pre-made backup script
     # shellcheck disable=SC2046
-    env $(xargs < "$envFile") "$OPENHAB_RUNTIME/bin/backup" "$@"
+    env $(xargs < "$envFile") "$OPENHAB_RUNTIME/bin/backup" "$@" --noroot
     ;;
 
   "clean-cache")
@@ -218,11 +218,8 @@ case "$option" in
 
   "restore")
     # Run some basic checks before running the restore script
-    checkRoot "$option"
     bText="0"
     bUI="0"
-    # shellcheck disable=SC2124
-    args="$@"
     while [ "$1" != "" ]; do
       case $1 in
         -h | --help)
@@ -240,18 +237,18 @@ case "$option" in
       esac
       shift
     done
-    # no need to stop OH if only --textconfig
+    # no need to stop openHAB if only --textconfig
     if [ "$bText" = "0" ] && [ "$bUI" = "0" ] || [ "$bUI" = "1" ]; then
       checkRunning
     fi
     # The restore script asks the user to confirm so no need to do it here.
     if [ -f "$filename" ]; then
-      echo "Started $OPENHAB_RUNTIME/bin/restore $args"
+      echo "Started $OPENHAB_RUNTIME/bin/restore" "$@"
       # shellcheck disable=SC2046
-      env $(xargs < "$envFile") "$OPENHAB_RUNTIME/bin/restore" "$args"
+      env $(xargs < "$envFile") "$OPENHAB_RUNTIME/bin/restore" "$@" --noroot
     else
       echo "Restore needs a valid backup file to continue."
-      echo "  e.g. 'sudo openhab-cli restore backup.zip'"
+      echo "  e.g. 'openhab-cli restore backup.zip'"
     fi
     ;;
 
