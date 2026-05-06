@@ -8,7 +8,10 @@
 
 ## Some notes:
 ## The script is currently designed to work for openHAB running under the Homebrew user.
-## When running under its dedicated user, echo messages might need adjustment as well as disabled checkRoot calls need to be re-enabled.
+## When running under its dedicated user:
+##   - echo messages might need adjustment,
+##   - disabled checkRoot calls need to be re-enabled,
+##   - --noroot flags for backup & restore distro scripts might need to removed.
 
 echo ""
 usage() {
@@ -98,7 +101,7 @@ case "$option" in
   "clean-cache")
     echo "This command will delete the temporary files within openHAB."
     echo "May resolve issues with addon installation and configuration."
-    checkRoot "$option"
+    # checkRoot "$option"
     checkRunning
     echo "The next start of openHAB will take a bit longer."
     confirmAction
@@ -217,7 +220,8 @@ case "$option" in
     ;;
 
   "restore")
-    # Run some basic checks before running the restore script
+    # Run some basic checks before running the restore script#
+    # checkRoot "$option"
     bText="0"
     bUI="0"
     while [ "$1" != "" ]; do
