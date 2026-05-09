@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: write
     env:
       TARGET_VERSION: ${{ github.event.inputs.version || github.event.client_payload.version }}
     outputs:
