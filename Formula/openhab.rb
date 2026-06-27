@@ -67,7 +67,7 @@ class Openhab < Formula
       OPENHAB_USERDATA="#{openhab_userdata}"
       OPENHAB_LOGDIR="#{openhab_logs}"
       OPENHAB_BACKUPS="#{openhab_backups}"
-      JAVA_HOME="#{Formula["openjdk@21"].opt_prefix}"
+      JAVA_HOME="#{formula_opt_prefix("openjdk@21")}"
     EOS
 
     # Wrapper script for launching openHAB:
@@ -341,7 +341,7 @@ class Openhab < Formula
       "OPENHAB_CONF"     => openhab_conf,
     }
 
-    java = Formula["openjdk@21"].opt_bin/"java"
+    java = formula_opt_bin("openjdk@21")/"java"
     upgradetool = openhab_runtime/"bin/upgradetool.jar"
 
     stdout, stderr, status = Open3.capture3(env, java, "-jar", upgradetool)
