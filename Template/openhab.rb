@@ -371,6 +371,11 @@ class FORMULA_NAME < Formula
     openhab_userdata.mkpath
     openhab_logs.mkpath
 
+    if (openhab_conf/"default").exist? && !openhab_default.exist?
+      ohai "Moving legacy default file to #{openhab_default}"
+      mv openhab_conf/"default", openhab_default
+    end
+
     current_version = read_version(openhab_userdata/"etc/version.properties")
     new_version = read_version(pkgshare/"userdata/etc/version.properties")
     is_upgrade = current_version && new_version != current_version
