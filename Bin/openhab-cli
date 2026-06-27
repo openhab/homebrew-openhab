@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck disable=SC1091
+# shellcheck disable=SC1091,SC1090
 
 ## This is a utility script to simplify the use of openHAB
 ## Intended to be used with a Homebrew install
@@ -82,8 +82,8 @@ elif [ -r "$(brew --prefix)/opt/openhab-milestone/libexec/env" ]; then
   envFile="$(brew --prefix)/opt/openhab-milestone/libexec/env"
 fi
 
-if [ -r "$OPENHAB_CONF/default" ]; then
-  . "$OPENHAB_CONF/default"
+if [ -r "$(brew --prefix)/etc/default/$formula" ]; then
+  . "$(brew --prefix)/etc/default/$formula"
 fi
 
 if [ -r "$OPENHAB_CONF/.env" ]; then
