@@ -86,6 +86,12 @@ if [ -r "$OPENHAB_CONF/default" ]; then
   . "$OPENHAB_CONF/default"
 fi
 
+if [ -r "$OPENHAB_CONF/.env" ]; then
+  set -a
+  . "$OPENHAB_CONF/.env"
+  set +a
+fi
+
 option="$1"
 shift
 
