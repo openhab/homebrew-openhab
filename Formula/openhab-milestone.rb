@@ -81,7 +81,6 @@ class OpenhabMilestone < Formula
         set -a
         . #{env_file}
         . #{openhab_conf}/default
-        [ -r #{openhab_conf}/.env ] && . #{openhab_conf}/.env
         set +a
         # Launch openHAB
         echo $(date +%Y-%m-%dT%H:%M:%S) Launching the openHAB runtime...
