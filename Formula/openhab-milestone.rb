@@ -28,6 +28,10 @@ class OpenhabMilestone < Formula
     etc/"openhab"
   end
 
+  def openhab_default
+    etc/"default/openhab-milestone"
+  end
+
   def openhab_userdata
     var/"lib/openhab"
   end
@@ -80,7 +84,7 @@ class OpenhabMilestone < Formula
         # Load environment variables
         set -a
         . #{env_file}
-        . #{openhab_conf}/default
+        . #{openhab_default}
         [ -r #{openhab_conf}/.env ] && . #{openhab_conf}/.env
         set +a
         # Launch openHAB
@@ -222,12 +226,12 @@ class OpenhabMilestone < Formula
     end
   end
 
-  # Installs the `$OPENHAB_CONF/default` file.
+  # Installs the `etc/default/openhab-milestone` file.
   # It is the equivalent of the `/etc/default/openhab` file on Deb/Rpm installations.
   #
   # Adapted from the [openHAB Linuxpkg resources](https://github.com/openhab/openhab-linuxpkg/blob/main/resources/etc/default/openhab).
   def install_default_file
-    default_file = openhab_conf/"default"
+    default_file = openhab_default
 
     return if default_file.exist?
 
@@ -363,8 +367,14 @@ class OpenhabMilestone < Formula
   def post_install
     # Ensure directories exist
     openhab_conf.mkpath
+    openhab_default.dirname.mkpath
     openhab_userdata.mkpath
     openhab_logs.mkpath
+
+    if (openhab_conf/"default").exist? && !openhab_default.exist?
+      ohai "Moving legacy default file to #{openhab_default}"
+      mv openhab_conf/"default", openhab_default
+    end
 
     current_version = read_version(openhab_userdata/"etc/version.properties")
     new_version = read_version(pkgshare/"userdata/etc/version.properties")
@@ -457,6 +467,7 @@ class OpenhabMilestone < Formula
     assert_path_exists openhab_runtime, "Runtime directory is missing"
     assert_path_exists openhab_runtime/"bin/karaf", "Karaf binary is missing"
     assert_path_exists openhab_conf, "Configuration directory missing"
+    assert_path_exists openhab_default, "default file is missing"
     assert_path_exists openhab_userdata, "Userdata directory missing"
     assert_path_exists openhab_logs, "Logs directory is missing"
   end
