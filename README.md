@@ -16,21 +16,11 @@ For general information about openHAB, please visit the [openHAB homepage](https
 
 If you are on Linux, it is recommended to use the APT or RPM packages, as APT and RPM are way more sophisticated than our Homebrew formulae.
 
-For macOS, refer to the [openHAB Documentation](https://next.openhab.org/docs/installation/macos.html#package-installation).
-
-### Troubleshooting
-
-#### Apache Felix File Install
-
-```text
-... [WARN ] [org.apache.felix.fileinstall] - /usr/share/openhab/addons does not exist, please create it.
-... [ERROR] [org.apache.felix.fileinstall] - Cannot create folder /var/lib/openhab/tmp/bundles. Is the folder write-protected?
-```
-
-When observing log messages like the above on startup, ensure proper `felix.fileinstall.dir` and `felix.fileinstall.dir` are set in `/opt/homebrew/var/lib/openhab/config/org/apache/felix/fileinstall/*.config`.
+For macOS, refer to the [openHAB Documentation](https://www.openhab.org/docs/installation/macos.html#package-installation).
 
 ## Documentation
 
 - [openHAB](https://www.openhab.org/docs)
+- [openHAB macOS Installation](https://www.openhab.org/docs/installation/macos.html#package-installation)
 - Homebrew: `brew help`, `man brew` or check [Homebrew's documentation](https://docs.brew.sh)
 - Homebrew Formula: Check the [Homebrew Formula Cookbook](https://docs.brew.sh/Formula-Cookbook)
