@@ -35,6 +35,12 @@ else
   if [[ "$(printf '%s\n%s' "$CURRENT_VERSION" "$VERSION" | sort -V | head -n1)" == "$CURRENT_VERSION" && "$CURRENT_VERSION" != "$VERSION" ]]; then
     echo "$VERSION is newer than $CURRENT_VERSION. Updating..."
     sed -i "s/^OPENHAB_VERSION=.*/OPENHAB_VERSION=$VERSION/" "$VERSION_FILE"
+
+    CURRENT_TESTING_VERSION=$(grep -oP '^OPENHAB_TESTING_VERSION=\K.+' "$VERSION_FILE")
+    if [[ "$CURRENT_TESTING_VERSION" == "$VERSION."* ]]; then
+      echo "Milestone version $CURRENT_TESTING_VERSION matches GA series $VERSION. Updating to $VERSION..."
+      sed -i "s/^OPENHAB_TESTING_VERSION=.*/OPENHAB_TESTING_VERSION=$VERSION/" "$VERSION_FILE"
+    fi
   else
     echo "$VERSION is not newer than $CURRENT_VERSION. Skipping update."
   fi
