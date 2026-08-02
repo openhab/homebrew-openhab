@@ -37,8 +37,8 @@ else
     sed -i "s/^OPENHAB_VERSION=.*/OPENHAB_VERSION=$VERSION/" "$VERSION_FILE"
 
     CURRENT_TESTING_VERSION=$(grep -oP '^OPENHAB_TESTING_VERSION=\K.+' "$VERSION_FILE")
-    if [[ "$CURRENT_TESTING_VERSION" == "$VERSION."* ]]; then
-      echo "Milestone version $CURRENT_TESTING_VERSION matches GA series $VERSION. Updating to $VERSION..."
+    if [[ "$CURRENT_TESTING_VERSION" == "$VERSION."* ]] || [[ "$(printf '%s\n%s' "$CURRENT_TESTING_VERSION" "$VERSION" | sort -V | head -n1)" == "$CURRENT_TESTING_VERSION" ]]; then
+      echo "Milestone version $CURRENT_TESTING_VERSION matches or is older than GA series $VERSION. Updating to $VERSION..."
       sed -i "s/^OPENHAB_TESTING_VERSION=.*/OPENHAB_TESTING_VERSION=$VERSION/" "$VERSION_FILE"
     fi
   else
